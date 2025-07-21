@@ -1,0 +1,60 @@
+---
+title: "Analyzing data on the level of cognitive processes: Exercise 3"
+output: html_document
+---
+
+```{r}
+library("here")
+library("bmm")
+library("dplyr")
+library("brms")
+```
+
+In this exercise we will implement now the basic M3 model that can be applied to the simple span task. We want to know how strong binding memory and item memory are for lists of words. We will use the data from the experiment 1 from Oberauer & Lewandowsky (2019). In this experiment, participants completed the complex span task. They were asked to memorize lists of words in order while completing a distracting processing task in which they read the presented word aloud, but were not supposed to memorize it. The experiment consisted of different conditions regarding the distractors in the processing task. 
+
+Since we are interested in implementing the basic model, we will focus at the conditions "old reordered" and "old same". In these conditions the same words that were supposed to be memorized were presented as distractors in the processing task. The distractors were either "reordered" so that the order of the words did not match with the memory task or the "same" so that the order of the word matches the order of the memory task.
+
+## Read in data
+
+```{r}
+mydata <- read.csv(here("data", "data_m3.csv"))
+
+mydata_filtered <- mydata %>% 
+  filter(cond != "new distractors")
+```
+
+## Implement basic M3 model
+
+```{r}
+m3_model <- m3(resp_cats = c("corr", "other", "npl"),
+               num_options = c("n_corr", "n_other", "n_npl"),
+               choice_rule = "softmax",
+               version = "ss")
+
+m3_formula <- bmf(
+  corr ~ b + a + c,
+  other ~ b + a,
+  npl ~ b,
+  c ~ 1 + cond + (1 + cond | ID),
+  a ~ 1 + cond + (1 + cond | ID)
+)
+
+m3_model$links <- list(
+  c = "log",
+  a = "log"
+)
+
+default_prior(m3_formula, data = mydata_filtered, model = m3_model)
+
+m3_fit <- bmm(
+  formula = m3_formula,
+  data = mydata_filtered,
+  model = m3_model,
+  cores = 4
+)
+
+# print summary of the model
+summary(m3_fit)
+```
+
+

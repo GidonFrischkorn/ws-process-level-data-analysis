@@ -1,5 +1,0 @@
----
-title: "exercise3"
-output: html_document
----
-
