@@ -1,37 +1,78 @@
 ---
-title: "Analyzing data on the level of cognitive processes: Exercise 3"
-output: html_document
+title: "Analyzing data on the level of cognitive processes"
+output:
+  html_document: default
+  pdf_document: default
 ---
 
+# Exercise 3 - Complex span task
+
+In this exercise we will implement M3 models to experiments from Oberauer & Lewandowsky (2019) in which participants completed complex span tasks. 
+
+## Task 1: Basic M3 model
+
+In task 1, we will implement the basic M3 model that can be applied to the complex span task. We will use the data set from experiment 1 from Oberauer & Lewandowsky (2019). You can find this data set in the bmm package under the name of "oberauer_lewandowsky_2019_e1".
+
+In this experiment, 40 participants completed a complex span task. They were asked to memorize lists of 5 words in order which was interleved by a distracting processing task. Participants were asked to read the presented word aloud. Participants selected their reported the memorized word by sleecting their responses from different displayed responses. 
+The experiment consisted of three different conditions regarding the distractors in the processing task that each participant completed. In the control condition, there were always new distractors (*"new distractors"*) presented in the processing task. In the remaining conditions the distractors in the processing task matched the words in the memory task. These distractors either matched the order in the memory task so that the same word was presented in the processing task as in the memory task (*"old same"*) or the distractors were presented in a different order than the memory task words (*"old reordered"*).
+
+Here is an overview what the individual variable in the data set refer to:
+
+-   ID: participant ID
+-   cond: distractor condition in the processing task (*"new distractors"*, *"old same"*, or *"old reordered"*)
+-   corr: number of correct responses (IIP)
+-   other: number of errors when a word from the list was reported, but at the incorrect position (IOP)
+-   npl: number of errors when a word *not* from the list was reported (NPL)
+-   dist: number of distractor words that were reported instead of a memory list word (only given in the *"new distractors"* condition)
+-   n_corr: total number of correct responses in each trial
+-   n_other: total number of IOP responses in each trial
+-   n_dist: total number of distractrs in each trial in the processing task
+-   n_npl: total number of NPL in each trial
+
+We want to know now what influence the processing task had on memorizing the words and how different cognitive processes were impacted, namely binding memory and item memory. Specifically, how well did participants remember the memory list words when the same word was displayed in the processing task (*"old same"*) in comparison when it was not (*"old reordered"*). 
+
+To this end, we are interested in implementing in a first step the basic M3 model and we will focus on the conditions *"old reordered"* and *"old same"*. 
+How are binding memory and item memory affected by the different distractor conditions? Does this match your expectations?
+
+### Load libraries
+
 ```{r}
+rm(list = ls())
+
 library("here")
 library("bmm")
 library("dplyr")
+library("tidyr")
 library("brms")
+library("ggplot2")
+library("tidybayes")
+library("readr")
 ```
 
-In this exercise we will implement now the basic M3 model that can be applied to the simple span task. We want to know how strong binding memory and item memory are for lists of words. We will use the data from the experiment 1 from Oberauer & Lewandowsky (2019). In this experiment, participants completed the complex span task. They were asked to memorize lists of words in order while completing a distracting processing task in which they read the presented word aloud, but were not supposed to memorize it. The experiment consisted of different conditions regarding the distractors in the processing task. 
-
-Since we are interested in implementing the basic model, we will focus at the conditions "old reordered" and "old same". In these conditions the same words that were supposed to be memorized were presented as distractors in the processing task. The distractors were either "reordered" so that the order of the words did not match with the memory task or the "same" so that the order of the word matches the order of the memory task.
-
-## Read in data
+### Read in data
 
 ```{r}
-mydata <- read.csv(here("data", "data_m3.csv"))
+mydata_exp1 <- oberauer_lewandowsky_2019_e1
 
-mydata_filtered <- mydata %>% 
+mydata_exp1_filtered <- mydata_exp1 %>% 
   filter(cond != "new distractors")
 ```
 
-## Implement basic M3 model
+### Implement basic M3 model
 
 ```{r}
-m3_model <- m3(resp_cats = c("corr", "other", "npl"),
+
+n_cores <- 4
+n_iters <- 3000
+n_warmup <- 1000
+n_chains <- 4
+
+m3_model_ss <- m3(resp_cats = c("corr", "other", "npl"),
                num_options = c("n_corr", "n_other", "n_npl"),
                choice_rule = "softmax",
                version = "ss")
 
-m3_formula <- bmf(
+m3_formula_ss <- bmf(
   corr ~ b + a + c,
   other ~ b + a,
   npl ~ b,
@@ -39,22 +80,123 @@ m3_formula <- bmf(
   a ~ 1 + cond + (1 + cond | ID)
 )
 
-m3_model$links <- list(
-  c = "log",
-  a = "log"
+default_prior(m3_formula_ss, data = mydata_exp1_filtered, model = m3_model_ss)
+
+m3_fit_ss <- bmm(
+  formula = m3_formula_ss,
+  data = mydata_exp1_filtered,
+  model = m3_model_ss,
+  core = n_cores,
+  chain = n_chains,
+  iter = n_warmup + n_iters,
+  warmup = n_warmup,
+  file = here("models", "model_m3_ss"),
+  file_refit = "on_change"
 )
 
-default_prior(m3_formula, data = mydata_filtered, model = m3_model)
+summary(m3_fit_ss)
+plot(m3_fit_ss)
 
-m3_fit <- bmm(
-  formula = m3_formula,
-  data = mydata_filtered,
-  model = m3_model,
-  cores = 4
-)
+posterior <- as_draws_df(m3_fit_ss) %>% 
+  select(starts_with("b_")) %>% 
+  pivot_longer(cols = starts_with("b_"), names_to = "effect", values_to = "estimate") %>% 
+  filter(effect != "b_b_Intercept")
 
-# print summary of the model
-summary(m3_fit)
+ggplot(posterior, aes(x = effect, y = estimate)) +
+  stat_slab()
+
+conditional_effects(m3_fit_ss, categorical = T, effects = "cond")
+
+```
+
+## Task 2: Extended M3 model
+
+In task 2 we will now extend our M3 model to the complex span task. In order to do so we need more information about the errors that participants did regarding the distractors from the processing task. Therefore, we will use in this task the data set from experiment 2 from Oberauer & Lewandowsky (2019) in which the number of distractors in position (DIP) and distractors in other position (DOP) are reported as well. You can find this data set "data_m3_exp2" in the folder "data". 
+
+This data set now includes as well the following variables:
+
+- condition: length of free time interval after each distractor, short (0.2 s; *"Low"*) or long (1.7 s; *"High"*) interval
+- dip: number of errors when a distractor from the processing task was reported in the correct position as the memory item (DIP)
+- dop: number of errors when a distractor from the processing task was reported, but from the incorrect position (DOP)
+
+In this experiment, 27 participants completed a complex span task. Similarly to experiment 1, they memorized lists of 5 words in order while completing a distracting processing task that immediately followed and were not supposed to memorize. Yet, in experiment 2, participants were asked to judge whether the presented word is smaller or larger than a soccer ball instead of reading the word aloud. This applied to the memory as well as the processing task. They again reported the memory word by selecting from a pool of displayed words.
+The experiment consisted of two conditions regarding the free time interval after the processing task. The time interval after each distractor was either long (*"High"*) or short (*"Low"*).
+
+In this task, we are interested in whether the free time interval (*"High"*) or (*"Low"*) after the distractor has an influence on the filtering of the distractors. Hence, we extend our M3 model for the complex span task to estimate as well the filtering process apart from the strength of binding and item memory. 
+How is the filtering parameter affected by the different distractor conditions? Does binding and item memory differ among the free time conditions?
+
+```{r}
+mydata_exp2 <- read_csv(here("data", "data_m3_exp2.csv"))
+
+# Memdat <- read.table(here("data", "data_m3_exp2.dat"), header=FALSE, row.names=NULL)
+# names(Memdat) <- c("NcorrHigh", "NcorrLow", "NotherHigh", "NotherLow", "NDinposHigh", "NDinposLow", "NDotherHigh", "NDotherLow", "NnplHigh", "NnplLow")
+# 
+# long_data <- Memdat %>%
+#   pivot_longer(
+#     cols = starts_with("N"),  # everything except id
+#     names_to = c(".value", "condition"),  # split names into variable and condition
+#     names_pattern = "(.+)(Low|High)"
+#   )
+# 
+# mydata_exp2 <- long_data %>% 
+#   rename(corr = Ncorr,
+#          other = Nother,
+#          dip = NDinpos,
+#          dop = NDother,
+#          npl = Nnpl) 
+# 
+# mydata_exp2 <- mydata_exp2 %>% 
+#   add_column(ID = rep(1:27, each = 2), .before = 1)
+# 
+# write_csv(mydata_exp2, here("data", "data_m3_exp2.csv"))
+
+mydata_exp2_filtered <- mydata_exp2 %>% 
+  filter(condition == "High")
 ```
 
 
+```{r}
+m3_model_cs <- m3(resp_cats = c("corr", "other", "dip", "dop", "npl"),
+               num_options = c(1, 4, 1, 4, 5),
+               choice_rule = "softmax",
+               version = "cs")
+
+m3_formula_cs <- bmf(
+  corr ~ b + a + c,
+  other ~ b + a,
+  dip ~ b + f * (a + c),
+  dop ~ b + f * a,
+  npl ~ b,
+  c ~ 1 + condition + (1 + condition | ID),
+  a ~ 1 + condition + (1 + condition | ID),
+  f ~ 1 + condition + (1 + condition | ID)
+)
+
+default_prior(m3_formula_cs, data = mydata_exp2, model = m3_model_cs)
+
+m3_fit_cs <- bmm(
+  formula = m3_formula_cs,
+  data = mydata_exp2,
+  model = m3_model_cs,
+  core = n_cores,
+  chain = n_chains,
+  iter = n_warmup + n_iters,
+  warmup = n_warmup,
+  file = here("models", "model_m3_cs"),
+  file_refit = "on_change"
+)
+
+summary(m3_fit_cs)
+plot(m3_fit_cs)
+
+posterior <- as_draws_df(m3_fit_cs) %>% 
+  select(starts_with("b_")) %>% 
+  pivot_longer(cols = starts_with("b_"), names_to = "effect", values_to = "estimate") %>% 
+  filter(effect != "b_b_Intercept")
+
+ggplot(posterior, aes(x = effect, y = estimate)) +
+  stat_slab()
+
+conditional_effects(m3_fit_cs, categorical = T, effects = "condition")
+
+```
