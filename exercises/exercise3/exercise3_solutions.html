@@ -364,20 +364,21 @@ complex span tasks.</p>
 <p>In task 1, we will implement the basic M3 model that can be applied
 to the complex span task. We will use the data set from experiment 1
 from Oberauer &amp; Lewandowsky (2019). You can find this data set in
-the bmm package under the name of “oberauer_lewandowsky_2019_e1”.</p>
+the bmm package under the name “oberauer_lewandowsky_2019_e1”.</p>
 <p>In this experiment, 40 participants completed a complex span task.
-They were asked to memorize lists of 5 words in order which was
-interleved by a distracting processing task. Participants were asked to
-read the presented word aloud. Participants selected their reported the
-memorized word by sleecting their responses from different displayed
-responses. The experiment consisted of three different conditions
-regarding the distractors in the processing task that each participant
-completed. In the control condition, there were always new distractors
-(<em>“new distractors”</em>) presented in the processing task. In the
-remaining conditions the distractors in the processing task matched the
-words in the memory task. These distractors either matched the order in
-the memory task so that the same word was presented in the processing
-task as in the memory task (<em>“old same”</em>) or the distractors were
+They were asked to memorize lists of 5 words in order which were
+interleaved by a distracting processing task. Participants were asked to
+read the presented words aloud. Participants reported the memorized
+words by selecting their responses from different displayed
+responses.</p>
+<p>The experiment consisted of three different conditions regarding the
+distractors in the processing task that each participant completed. In
+the control condition, there were always new distractors (<em>“new
+distractors”</em>) presented in the processing task. In the remaining
+conditions, the distractors in the processing task matched the words in
+the memory task. These distractors either matched the order in the
+memory task so that the same word was presented in the processing task
+as in the memory task (<em>“old same”</em>) or the distractors were
 presented in a different order than the memory task words (<em>“old
 reordered”</em>).</p>
 <p>Here is an overview what the individual variable in the data set
@@ -397,21 +398,21 @@ memory list word (only given in the <em>“new distractors”</em>
 condition)</li>
 <li>n_corr: total number of correct responses in each trial</li>
 <li>n_other: total number of IOP responses in each trial</li>
-<li>n_dist: total number of distractrs in each trial in the processing
+<li>n_dist: total number of distractors in each trial in the processing
 task</li>
 <li>n_npl: total number of NPL in each trial</li>
 </ul>
-<p>We want to know now what influence the processing task had on
-memorizing the words and how different cognitive processes were
-impacted, namely binding memory and item memory. Specifically, how well
-did participants remember the memory list words when the same word was
-displayed in the processing task (<em>“old same”</em>) in comparison
-when it was not (<em>“old reordered”</em>).</p>
-<p>To this end, we are interested in implementing in a first step the
-basic M3 model and we will focus on the conditions <em>“old
-reordered”</em> and <em>“old same”</em>. How are binding memory and item
-memory affected by the different distractor conditions? Does this match
-your expectations?</p>
+<p>We are now interested in investigating the influence of the
+processing task on memorizing the words and how different cognitive
+processes were impacted, namely binding memory and item memory.
+Specifically, how well did participants remember the memory list words
+when the same word was displayed in the processing task (<em>“old
+same”</em>) in comparison when it was not (<em>“old
+reordered”</em>)?</p>
+<p>To this end, we will implement the basic M3 model and will focus on
+the conditions <em>“old reordered”</em> and <em>“old same”</em>. How are
+binding memory and item memory affected by the different distractor
+conditions? Does this match your expectations?</p>
 <div id="load-libraries" class="section level3">
 <h3>Load libraries</h3>
 <pre class="r"><code>rm(list = ls())
@@ -611,15 +612,14 @@ default_prior(m3_formula_ss, data = mydata_exp1_filtered, model = m3_model_ss)</
 </div>
 <div id="task-2-extended-m3-model" class="section level2">
 <h2>Task 2: Extended M3 model</h2>
-<p>In task 2 we will now extend our M3 model to the complex span task.
-In order to do so we need more information about the errors that
-participants did regarding the distractors from the processing task.
-Therefore, we will use in this task the data set from experiment 2 from
-Oberauer &amp; Lewandowsky (2019) in which the number of distractors in
-position (DIP) and distractors in other position (DOP) are reported as
-well. You can find this data set “data_m3_exp2” in the folder
-“data”.</p>
-<p>This data set now includes as well the following variables:</p>
+<p>In task 2, we will now extend our M3 model. In this model, we want to
+take the information about the errors that participants did regarding
+the distractors from the processing task into consideration. Therefore,
+we will use in this task the data set from experiment 2 from Oberauer
+&amp; Lewandowsky (2019) in which the number of distractors in position
+(DIP) and distractors in other position (DOP) are reported as well. You
+can find this data set “data_m3_exp2” in the folder “data”.</p>
+<p>This data set includes some additional variables:</p>
 <ul>
 <li>condition: length of free time interval after each distractor, short
 (0.2 s; <em>“Low”</em>) or long (1.7 s; <em>“High”</em>) interval</li>
@@ -630,22 +630,24 @@ reported, but from the incorrect position (DOP)</li>
 </ul>
 <p>In this experiment, 27 participants completed a complex span task.
 Similarly to experiment 1, they memorized lists of 5 words in order
-while completing a distracting processing task that immediately followed
-and were not supposed to memorize. Yet, in experiment 2, participants
-were asked to judge whether the presented word is smaller or larger than
-a soccer ball instead of reading the word aloud. This applied to the
-memory as well as the processing task. They again reported the memory
-word by selecting from a pool of displayed words. The experiment
-consisted of two conditions regarding the free time interval after the
-processing task. The time interval after each distractor was either long
-(<em>“High”</em>) or short (<em>“Low”</em>).</p>
-<p>In this task, we are interested in whether the free time interval
-(<em>“High”</em>) or (<em>“Low”</em>) after the distractor has an
-influence on the filtering of the distractors. Hence, we extend our M3
-model for the complex span task to estimate as well the filtering
-process apart from the strength of binding and item memory. How is the
-filtering parameter affected by the different distractor conditions?
-Does binding and item memory differ among the free time conditions?</p>
+while completing a not-to-be-memorized distracting processing task that
+immediately followed. Yet, in experiment 2, participants were asked to
+judge whether the presented word is smaller or larger than a soccer ball
+instead of reading the word aloud. This applied to the memory as well as
+the processing task. They again reported the memory words by selecting
+their response from a pool of displayed words.</p>
+<p>The experiment consisted of two conditions regarding the free time
+interval after the processing task. The time interval after each
+distractor was either long (<em>“High”</em>) or short
+(<em>“Low”</em>).</p>
+<p>In this task, we are interested in examining whether the free time
+interval (<em>“High”</em>) or (<em>“Low”</em>) after the distractors has
+an influence on the filtering of the distractors. Hence, we extend our
+M3 model for the complex span task to estimate as well the filtering
+process apart from the strength of binding and item memory.</p>
+<p>How is the filtering parameter affected by the different distractor
+conditions? Does binding and item memory differ among the free time
+conditions?</p>
 <pre class="r"><code>mydata_exp2 &lt;- read_csv(here(&quot;data&quot;, &quot;data_m3_exp2.csv&quot;))</code></pre>
 <pre><code>## Rows: 54 Columns: 7
 ## ── Column specification ────────────────────────────────────────────────────────
