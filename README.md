@@ -13,3 +13,25 @@ The `exercises` folder contains scripts and Markdown files that provide solution
 The `results` folder contains saved results files from the models estimated during the workshop. Should you run into difficulties with one of the exercises and not be able to esimate one of the models we are working on during the workshop, you can load these results files to still evaluate results and see how to interpret them.
 
 The `data` folder contains the data set we will use for the exercises. Please note that these data sets are shared only for the exercises and are not to be distributed further.
+
+## Required software
+
+Please ensure that you have a current version of R (> 4.0.0) and RStudio installed on your machine. You can find instrcuction on dowloading these here:
+
+- [R for Windows](https://cran.r-project.org/bin/windows/base/)
+- [R for Mac](https://cran.r-project.org/bin/macosx/)
+- [RStudio](https://posit.co/download/rstudio-desktop/)
+
+### STAN
+
+In addition to R and RStudio, you should also install either `rstan` or `cmdstanr` for using STAN from R. Instruction on installing STAN can be found [here](https://mc-stan.org/install/). We recommend installing both `rstan` and `cmdstanr` via R-Universe as these are slightly more up-to-date versions of these packages.
+
+### bmm
+
+Finally, you need to install the `bmm` R package. As we will use very recent and some features still in development, please install the develeoper version:
+
+```
+devtools::install_github("GidonFrischkorn/bmm")
+```
+
+
