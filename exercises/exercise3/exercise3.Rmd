@@ -1,0 +1,46 @@
+---
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Exercise 3 - Set size effects
+
+In this exercise we will implement the basic M3 model to the data sets from Oberauer (2019) "Working Memory Capacity Limits Memory for Bindings" in which participants completed a cued recall task. In two experiments, participant were asked to memorize lists. In different conditions, various numbers of words (set size 2, 4, 6, 8) were displayed within a list. At test, participants were cued with a list position and asked to select the word from a selection of words. This selection could contain apart from the correct word, other presented list words (IOP) or completely new words (NPL).
+
+The data set for experiment 1 "exercise3_data_exp1.txt" and experiment 2 "exercise3_data_exp2.txt" are in the folder "data". Here is an overview what the individual variables in each data set refer to:
+
+-   id: participant ID
+-   setsize: setsize of words within a list (2, 4, 6 or 8) as a factor
+-   setsize_lin: setsize if words within a list (2, 4, 6 or 8) as a linear variable
+-   n_IIP: total number of correct responses in each trial
+-   n_IOP: total number of IOP responses in each trial
+-   n_NPL: total number of NPL in each trial
+-   IIP: number of correct responses (IIP)
+-   IOP: number of errors when a word from the list was reported, but at the incorrect position (IOP)
+-   NPL: number of errors when a word *not* from the list was reported (NPL)
+-   total: total number of IIP, IOP, and NPL
+
+## Task 1: Experiment 1
+
+We are interested in investigating how the set sizes affect participants memorizing the word lists in experiment 1 ("exercise3_data_exp1.txt"). Specifically, we are interested in examining how the cognitive processes, namely binding memory and item memory, change with increasing set sizes.
+
+To this end, we will...
+
+a)  ... examine and plot the proportions of correct responses in experiment 1 descriptively for the different set sizes. How do the proportions change for the different set sizes?
+
+b)  ... implement the basic M3 model and plot the results (e.g., the model estimates, model predictions). How are binding memory and item memory affected by the different set sizes? Does this match your expectations?
+
+## Task 2: Experiment 2
+
+In experiment 2, the same design as in experiment 1 was applied. However, the pool from which the words in the list were chosen from was restricted in comparison to experiment. We want to examine whether and how this change from a large word pool in experiment 1 to a small word pool in experiment 2 changes the underlying cognitive processes of the set size effect.
+
+a)  Thus, we will first plot the data from experiment 2 descriptively ("exercise3_data_exp2.txt").
+b)  Next, we implement the same basic M3 model and examine the model output. Plot the model results.
+c)  We test whether there are differences among the different set sizes using hypothesis tests. Do the results differ between experiment 1 and 2? If yes, how so?
