@@ -1,44 +1,49 @@
 ---
-title: "Analyzing data on the level of cognitive processes"
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
-# Exercise 3 - Complex span task
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
 
-In this exercise we will implement M3 models to experiments from Oberauer & Lewandowsky (2019) in which participants completed complex span tasks.
+# Exercise 3 - Set size effects
 
-## Task 1: Basic M3 model
+In this exercise we will implement the basic M3 model to the data sets from Oberauer (2019) "Working Memory Capacity Limits Memory for Bindings" in which participants completed a cued recall task. In two experiments, participant were asked to memorize lists. In different conditions, various numbers of words (set size 2, 4, 6, 8) were displayed within a list. At test, participants were cued with a list position and asked to select the word from a selection of words. This selection could contain apart from the correct word, other presented list words (IOP) or completely new words (NPL).
 
-In task 1, we will implement the basic M3 model that can be applied to the complex span task. We will use the data set from experiment 1 from Oberauer & Lewandowsky (2019). You can find this data set in the bmm package under the name "oberauer_lewandowsky_2019_e1".
+The data set for experiment 1 "exercise3_data_exp1.txt" and experiment 2 "exercise3_data_exp2.txt" are in the folder "data". Here is an overview what the individual variables in each data set refer to:
 
-In this experiment, 40 participants completed a complex span task. They were asked to memorize lists of 5 words in order which were interleaved by a distracting processing task. Participants were asked to read the presented words aloud. Participants reported the memorized words by selecting their responses from different displayed responses.
+-   id: participant ID
+-   setsize: setsize of words within a list (2, 4, 6 or 8) as a factor
+-   setsize_lin: setsize if words within a list (2, 4, 6 or 8) as a linear variable
+-   n_IIP: total number of correct responses in each trial
+-   n_IOP: total number of IOP responses in each trial
+-   n_NPL: total number of NPL in each trial
+-   IIP: number of correct responses (IIP)
+-   IOP: number of errors when a word from the list was reported, but at the incorrect position (IOP)
+-   NPL: number of errors when a word *not* from the list was reported (NPL)
+-   total: total number of IIP, IOP, and NPL
 
-The experiment consisted of three different conditions regarding the distractors in the processing task that each participant completed. In the control condition, there were always new distractors (*"new distractors"*) presented in the processing task. In the remaining conditions, the distractors in the processing task matched the words in the memory task. These distractors either matched the order in the memory task so that the same word was presented in the processing task as in the memory task (*"old same"*) or the distractors were presented in a different order than the memory task words (*"old reordered"*).
+## Task 1: Experiment 1
 
-Here is an overview what the individual variable in the data set refer to:
+We are interested in investigating how the set sizes affect participants memorizing the word lists in experiment 1 ("exercise3_data_exp1.txt"). Specifically, we are interested in examining how the cognitive processes, namely binding memory and item memory, change with increasing set sizes.
 
--   ID: participant ID
--   cond: distractor condition in the processing task (*"new distractors"*, *"old same"*, or *"old reordered"*)
--   corr: number of correct responses (IIP)
--   other: number of errors when a word from the list was reported, but at the incorrect position (IOP)
--   npl: number of errors when a word *not* from the list was reported (NPL)
--   dist: number of distractor words that were reported instead of a memory list word (only given in the *"new distractors"* condition)
--   n_corr: total number of correct responses in each trial
--   n_other: total number of IOP responses in each trial
--   n_dist: total number of distractors in each trial in the processing task
--   n_npl: total number of NPL in each trial
+To this end, we will...
 
-We are now interested in investigating the influence of the processing task on memorizing the words and how different cognitive processes were impacted, namely binding memory and item memory. Specifically, how well did participants remember the memory list words when the same word was displayed in the processing task (*"old same"*) in comparison when it was not (*"old reordered"*)?
+a)  ... examine and plot the proportions of correct responses in experiment 1 descriptively for the different set sizes. How do the proportions change for the different set sizes?
 
-To this end, we will implement the basic M3 model and will focus on the conditions *"old reordered"* and *"old same"*. How are binding memory and item memory affected by the different distractor conditions? Does this match your expectations?
+b)  ... implement the basic M3 model and plot the results (e.g., the model estimates, model predictions). How are binding memory and item memory affected by the different set sizes? Does this match your expectations?
 
 ### Load libraries
 
-```{r}
+```{r, message=F}
+
+# empty environment
 rm(list = ls())
 
+# load libraries
 library("here")
 library("bmm")
 library("dplyr")
@@ -47,157 +52,291 @@ library("brms")
 library("ggplot2")
 library("tidybayes")
 library("readr")
+
 ```
 
-### Read in data
+### Load data
 
 ```{r}
-mydata_exp1 <- oberauer_lewandowsky_2019_e1
 
-mydata_exp1_filtered <- mydata_exp1 %>% 
-  filter(cond != "new distractors")
+# experiment 1
+mydata_exp1 <- read.table(here("data", "exercise3_data_exp1.txt"))
+mydata_exp1$setsize <- as.factor(mydata_exp1$setsize)
+
+```
+
+### Descriptive proportions
+
+```{r}
+
+# calculate proportions
+prop_data <- mydata_exp1 %>%
+  group_by(id, setsize) %>%
+  summarise(prop = sum(IIP) / sum(total), .groups = "drop") %>%  
+  group_by(setsize) %>%
+  summarise(
+    mean_prop = mean(prop),
+    se = sd(prop) / sqrt(n()),
+    lower = mean_prop - 1.96 * se,
+    upper = mean_prop + 1.96 * se,
+    .groups = "drop"
+  )
+
+prop_data
+
+# plot proportions
+ggplot(prop_data, aes(x = factor(setsize), y = mean_prop)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.1) +
+  labs(y = "Proportion of IIP", x = "Set Size") +
+  coord_cartesian(ylim = c(0, 1))
+
 ```
 
 ### Implement basic M3 model
 
+#### Set model settings
+
 ```{r}
 
 n_cores <- 4
-n_iters <- 3000
-n_warmup <- 1000
-n_chains <- 4
+n_iters <- 2000 # number of total iterations
+n_warmup <- 1000 # number of warmups
+n_chains <- 4 # number of chains
 
-m3_model_ss <- m3(resp_cats = c("corr", "other", "npl"),
-               num_options = c("n_corr", "n_other", "n_npl"),
+```
+
+#### Define model formula, priors and model
+
+```{r}
+
+# model
+m3_model_ss <- m3(resp_cats = c("IIP", "IOP", "NPL"),
+               num_options = c("n_IIP", "n_IOP", "n_NPL"),
                choice_rule = "softmax",
                version = "ss")
 
+# model formula
 m3_formula_ss <- bmf(
-  corr ~ b + a + c,
-  other ~ b + a,
-  npl ~ b,
-  c ~ 1 + cond + (1 + cond | ID),
-  a ~ 1 + cond + (1 + cond | ID)
+  IIP ~ b + a + c,
+  IOP ~ b + a,
+  NPL ~ b,
+  c ~ 1 + setsize + (1 + setsize | id),
+  a ~ 1 + setsize + (1 + setsize | id)
 )
 
-default_prior(m3_formula_ss, data = mydata_exp1_filtered, model = m3_model_ss)
+# check priors
+default_prior(m3_formula_ss, data = mydata_exp1, model = m3_model_ss)
 
-m3_fit_ss <- bmm(
+```
+
+#### Fit and run model
+
+```{r, echo=FALSE, fig.show='hide'}
+
+# fit model
+m3_fit_ss_exp1 <- bmm(
   formula = m3_formula_ss,
-  data = mydata_exp1_filtered,
+  data = mydata_exp1,
   model = m3_model_ss,
+  sample_prior = TRUE, # for hypothesis tests
+  save_all_pars = TRUE, # save marginal likelihood
   core = n_cores,
   chain = n_chains,
   iter = n_warmup + n_iters,
   warmup = n_warmup,
-  file = here("models", "model_m3_ss"),
-  file_refit = "on_change"
+  file = here("models", "model_m3_ss_exp1"),
+  file_refit = "never"
 )
 
-summary(m3_fit_ss)
-plot(m3_fit_ss)
+# model summary
+summary(m3_fit_ss_exp1)
 
-posterior <- as_draws_df(m3_fit_ss) %>% 
+# model fit
+plot(m3_fit_ss_exp1, ask = F)
+
+```
+
+#### Plot model posteriors and model predicitions
+
+```{r}
+
+# extract posterior samples
+posterior <- as_draws_df(m3_fit_ss_exp1) %>% 
   select(starts_with("b_")) %>% 
   pivot_longer(cols = starts_with("b_"), names_to = "effect", values_to = "estimate") %>% 
   filter(effect != "b_b_Intercept")
 
+# plot posterior samples
 ggplot(posterior, aes(x = effect, y = estimate)) +
   stat_slab()
 
-conditional_effects(m3_fit_ss, categorical = T, effects = "cond")
+# plot model predictions on native scale
+conditional_effects(m3_fit_ss_exp1, categorical = T, effects = "setsize")
 
 ```
 
-## Task 2: Extended M3 model
-
-In task 2, we will now extend our M3 model. In this model, we want to take the information about the errors that participants did regarding the distractors from the processing task into consideration. Therefore, we will use in this task the data set from experiment 2 from Oberauer & Lewandowsky (2019) in which the number of distractors in position (DIP) and distractors in other position (DOP) are reported as well. You can find this data set "data_m3_exp2" in the folder "data".
-
-This data set includes some additional variables:
-
--   condition: length of free time interval after each distractor, short (0.2 s; *"Low"*) or long (1.7 s; *"High"*) interval
--   dip: number of errors when a distractor from the processing task was reported in the correct position as the memory item (DIP)
--   dop: number of errors when a distractor from the processing task was reported, but from the incorrect position (DOP)
-
-In this experiment, 27 participants completed a complex span task. Similarly to experiment 1, they memorized lists of 5 words in order while completing a not-to-be-memorized distracting processing task that immediately followed. Yet, in experiment 2, participants were asked to judge whether the presented word is smaller or larger than a soccer ball instead of reading the word aloud. This applied to the memory as well as the processing task. They again reported the memory words by selecting their response from a pool of displayed words.
-
-The experiment consisted of two conditions regarding the free time interval after the processing task. The time interval after each distractor was either long (*"High"*) or short (*"Low"*).
-
-In this task, we are interested in examining whether the free time interval (*"High"*) or (*"Low"*) after the distractors has an influence on the filtering of the distractors. Hence, we extend our M3 model for the complex span task to estimate as well the filtering process apart from the strength of binding and item memory.
-
-How is the filtering parameter affected by the different distractor conditions? Does binding and item memory differ among the free time conditions?
+#### Hypothesis tests
 
 ```{r}
-mydata_exp2 <- read_csv(here("data", "data_m3_exp2.csv"))
 
-# Memdat <- read.table(here("data", "data_m3_exp2.dat"), header=FALSE, row.names=NULL)
-# names(Memdat) <- c("NcorrHigh", "NcorrLow", "NotherHigh", "NotherLow", "NDinposHigh", "NDinposLow", "NDotherHigh", "NDotherLow", "NnplHigh", "NnplLow")
-# 
-# long_data <- Memdat %>%
-#   pivot_longer(
-#     cols = starts_with("N"),  # everything except id
-#     names_to = c(".value", "condition"),  # split names into variable and condition
-#     names_pattern = "(.+)(Low|High)"
-#   )
-# 
-# mydata_exp2 <- long_data %>% 
-#   rename(corr = Ncorr,
-#          other = Nother,
-#          dip = NDinpos,
-#          dop = NDother,
-#          npl = Nnpl) 
-# 
-# mydata_exp2 <- mydata_exp2 %>% 
-#   add_column(ID = rep(1:27, each = 2), .before = 1)
-# 
-# write_csv(mydata_exp2, here("data", "data_m3_exp2.csv"))
+# to-be testes hypotheses
+tests <- c(
+  "c_Intercept = c_setsize4",
+  "c_setsize4 = c_setsize6",
+  "c_setsize6 = c_setsize8",
+  "a_Intercept = a_setsize4",
+  "a_setsize4 = a_setsize6",
+  "a_setsize6 = a_setsize8"
+)
 
-mydata_exp2_filtered <- mydata_exp2 %>% 
-  filter(condition == "High")
+hypothesis(m3_fit_ss_exp1, tests)
+
 ```
 
+## Task 2: Experiment 2
+
+In experiment 2, the same design as in experiment 1 was applied. However, the pool from which the words in the list were chosen from was restricted in comparison to experiment. We want to examine whether and how this change from a large word pool in experiment 1 to a small word pool in experiment 2 changes the underlying cognitive processes of the set size effect.
+
+a)  Thus, we will first plot the data from experiment 2 descriptively ("exercise3_data_exp2.txt").
+b)  Next, we implement the same basic M3 model and examine the model output. Plot the model results.
+c)  We test whether there are differences among the different set sizes using hypothesis tests. Do the results differ between experiment 1 and 2? If yes, how so?
+
+### Load data
+
 ```{r}
-m3_model_cs <- m3(resp_cats = c("corr", "other", "dip", "dop", "npl"),
-               num_options = c(1, 4, 1, 4, 5),
+
+# experiment 2
+mydata_exp2 <- read.table(here('data', 'exercise3_data_exp2.txt'))
+mydata_exp2$setsize <- as.factor(mydata_exp2$setsize)
+
+```
+
+### Descriptive proportions
+
+```{r}
+
+# calculate proportions
+prop_data <- mydata_exp2 %>%
+  group_by(id, setsize) %>%
+  summarise(prop = sum(IIP) / sum(total), .groups = "drop") %>%  
+  group_by(setsize) %>%
+  summarise(
+    mean_prop = mean(prop),
+    se = sd(prop) / sqrt(n()),
+    lower = mean_prop - 1.96 * se,
+    upper = mean_prop + 1.96 * se,
+    .groups = "drop"
+  )
+
+prop_data
+
+# plot proportions
+ggplot(prop_data, aes(x = factor(setsize), y = mean_prop)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.1) +
+  labs(y = "Proportion of IIP", x = "Set Size") +
+  coord_cartesian(ylim = c(0, 1))
+
+```
+
+### Implement basic M3 model
+
+#### Set model settings
+
+```{r}
+
+n_cores <- 4
+n_iters <- 2000 # number of total iterations
+n_warmup <- 1000 # number of warmups
+n_chains <- 4 # number of chains
+
+```
+
+#### Define model formula, priors and model
+
+```{r}
+
+# model
+m3_model_ss <- m3(resp_cats = c("IIP", "IOP", "NPL"),
+               num_options = c("n_IIP", "n_IOP", "n_NPL"),
                choice_rule = "softmax",
-               version = "cs")
+               version = "ss")
 
-m3_formula_cs <- bmf(
-  corr ~ b + a + c,
-  other ~ b + a,
-  dip ~ b + f * (a + c),
-  dop ~ b + f * a,
-  npl ~ b,
-  c ~ 1 + condition + (1 + condition | ID),
-  a ~ 1 + condition + (1 + condition | ID),
-  f ~ 1 + condition + (1 + condition | ID)
+# model formula
+m3_formula_ss <- bmf(
+  IIP ~ b + a + c,
+  IOP ~ b + a,
+  NPL ~ b,
+  c ~ 1 + setsize + (1 + setsize | id),
+  a ~ 1 + setsize + (1 + setsize | id)
 )
 
-default_prior(m3_formula_cs, data = mydata_exp2, model = m3_model_cs)
+# check priors
+default_prior(m3_formula_ss, data = mydata_exp2, model = m3_model_ss)
 
-m3_fit_cs <- bmm(
-  formula = m3_formula_cs,
+```
+
+#### Fit and run model
+
+```{r, echo=FALSE, fig.show='hide'}
+
+# fit model
+m3_fit_ss_exp2 <- bmm(
+  formula = m3_formula_ss,
   data = mydata_exp2,
-  model = m3_model_cs,
+  model = m3_model_ss,
+  sample_prior = TRUE, # for hypothesis tests
+  save_all_pars = TRUE, # save marginal likelihood
   core = n_cores,
   chain = n_chains,
   iter = n_warmup + n_iters,
   warmup = n_warmup,
-  file = here("models", "model_m3_cs"),
-  file_refit = "on_change"
+  file = here("models", "model_m3_ss_exp2"),
+  file_refit = "never"
 )
 
-summary(m3_fit_cs)
-plot(m3_fit_cs)
+# model summary
+summary(m3_fit_ss_exp2)
 
-posterior <- as_draws_df(m3_fit_cs) %>% 
+# model fit
+plot(m3_fit_ss_exp2, ask = F)
+
+```
+
+#### Plot model posteriors and model predicitions
+
+```{r}
+
+# extract posterior samples
+posterior <- as_draws_df(m3_fit_ss_exp2) %>% 
   select(starts_with("b_")) %>% 
   pivot_longer(cols = starts_with("b_"), names_to = "effect", values_to = "estimate") %>% 
   filter(effect != "b_b_Intercept")
 
+# plot posterior samples
 ggplot(posterior, aes(x = effect, y = estimate)) +
   stat_slab()
 
-conditional_effects(m3_fit_cs, categorical = T, effects = "condition")
+# plot model predictions on native scale
+conditional_effects(m3_fit_ss_exp2, categorical = T, effects = "setsize")
+
+```
+
+#### Hypothesis tests
+
+```{r}
+
+# to-be testes hypotheses
+tests <- c(
+  "c_Intercept = c_setsize4",
+  "c_setsize4 = c_setsize6",
+  "c_setsize6 = c_setsize8",
+  "a_Intercept = a_setsize4",
+  "a_setsize4 = a_setsize6",
+  "a_setsize6 = a_setsize8"
+)
+
+hypothesis(m3_fit_ss_exp2, tests)
 
 ```
