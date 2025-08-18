@@ -1,15 +1,16 @@
 ---
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-# Exercise 3 - Set size effects
+# Solutions: Exercise 3 - Set size effects
 
 In this exercise we will implement the basic M3 model to the data sets from Oberauer (2019) "Working Memory Capacity Limits Memory for Bindings" in which participants completed a cued recall task. In two experiments, participant were asked to memorize lists. In different conditions, various numbers of words (set size 2, 4, 6, 8) were displayed within a list. At test, participants were cued with a list position and asked to select the word from a selection of words. This selection could contain apart from the correct word, other presented list words (IOP) or completely new words (NPL).
 

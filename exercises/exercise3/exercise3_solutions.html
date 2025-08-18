@@ -9,6 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage" />
 
 
 <title>Analyzing data on the level of cognitive processes - ESCoP 2025</title>
@@ -350,12 +351,14 @@ display: none;
 
 <h1 class="title toc-ignore">Analyzing data on the level of cognitive
 processes - ESCoP 2025</h1>
+<h4 class="author">Gidon T. Frischkorn, Ruhi Bhanap, and Isabel
+Courage</h4>
 
 </div>
 
 
-<div id="exercise-3---set-size-effects" class="section level1">
-<h1>Exercise 3 - Set size effects</h1>
+<div id="solutions-exercise-3---set-size-effects" class="section level1">
+<h1>Solutions: Exercise 3 - Set size effects</h1>
 <p>In this exercise we will implement the basic M3 model to the data
 sets from Oberauer (2019) “Working Memory Capacity Limits Memory for
 Bindings” in which participants completed a cued recall task. In two
@@ -652,15 +655,15 @@ hypothesis(m3_fit_ss_exp1, tests)</code></pre>
 ## 2 (c_setsize4)-(c_s... = 0     1.57      0.25     1.11     2.09       0.00
 ## 3 (c_setsize6)-(c_s... = 0     0.82      0.12     0.59     1.07       0.00
 ## 4 (a_Intercept)-(a_... = 0     2.15      0.62     0.96     3.36       0.01
-## 5 (a_setsize4)-(a_s... = 0    -0.01      0.51    -0.98     1.01       1.35
-## 6 (a_setsize6)-(a_s... = 0     0.43      0.33    -0.21     1.08       0.89
+## 5 (a_setsize4)-(a_s... = 0    -0.01      0.51    -0.98     1.01       1.38
+## 6 (a_setsize6)-(a_s... = 0     0.43      0.33    -0.21     1.08       0.93
 ##   Post.Prob Star
 ## 1      0.00    *
 ## 2      0.00    *
 ## 3      0.00    *
 ## 4      0.01    *
 ## 5      0.58     
-## 6      0.47     
+## 6      0.48     
 ## ---
 ## &#39;CI&#39;: 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
 ## &#39;*&#39;: For one-sided hypotheses, the posterior probability exceeds 95%;
@@ -672,9 +675,9 @@ hypothesis(m3_fit_ss_exp1, tests)</code></pre>
 <div id="task-2-experiment-2" class="section level2">
 <h2>Task 2: Experiment 2</h2>
 <p>In experiment 2, the same design as in experiment 1 was applied.
-However, the pool from which the words in the list were chosen from was
-restricted in comparison to experiment. We want to examine whether and
-how this change from a large word pool in experiment 1 to a small word
+However, the pool from which the list words were chosen from was
+restricted in comparison to experiment 1. We want to examine whether and
+how this switch from a large word pool in experiment 1 to a small word
 pool in experiment 2 changes the underlying cognitive processes of the
 set size effect.</p>
 <ol style="list-style-type: lower-alpha">
@@ -921,16 +924,16 @@ hypothesis(m3_fit_ss_exp2, tests)</code></pre>
 ## 1 (c_Intercept)-(c_... = 0     5.45      0.58     4.29     6.59       0.00
 ## 2 (c_setsize4)-(c_s... = 0     2.06      0.34     1.46     2.81       0.00
 ## 3 (c_setsize6)-(c_s... = 0     0.70      0.10     0.50     0.91       0.00
-## 4 (a_Intercept)-(a_... = 0     0.24      0.52    -0.77     1.25       9.22
-## 5 (a_setsize4)-(a_s... = 0     0.15      0.34    -0.48     0.84       2.09
-## 6 (a_setsize6)-(a_s... = 0     0.20      0.15    -0.10     0.51       1.99
+## 4 (a_Intercept)-(a_... = 0     0.24      0.52    -0.77     1.25       9.70
+## 5 (a_setsize4)-(a_s... = 0     0.15      0.34    -0.48     0.84       2.01
+## 6 (a_setsize6)-(a_s... = 0     0.20      0.15    -0.10     0.51       1.91
 ##   Post.Prob Star
 ## 1      0.00    *
 ## 2      0.00    *
 ## 3      0.00    *
-## 4      0.90     
-## 5      0.68     
-## 6      0.67     
+## 4      0.91     
+## 5      0.67     
+## 6      0.66     
 ## ---
 ## &#39;CI&#39;: 90%-CI for one-sided and 95%-CI for two-sided hypotheses.
 ## &#39;*&#39;: For one-sided hypotheses, the posterior probability exceeds 95%;
