@@ -196,7 +196,7 @@ hypothesis(m3_fit_ss_exp1, tests)
 
 ## Task 2: Experiment 2
 
-In experiment 2, the same design as in experiment 1 was applied. However, the pool from which the words in the list were chosen from was restricted in comparison to experiment. We want to examine whether and how this change from a large word pool in experiment 1 to a small word pool in experiment 2 changes the underlying cognitive processes of the set size effect.
+In experiment 2, the same design as in experiment 1 was applied. However, the pool from which the list words were chosen from was restricted in comparison to experiment 1. We want to examine whether and how this switch from a large word pool in experiment 1 to a small word pool in experiment 2 changes the underlying cognitive processes of the set size effect.
 
 a)  Thus, we will first plot the data from experiment 2 descriptively ("exercise3_data_exp2.txt").
 b)  Next, we implement the same basic M3 model and examine the model output. Plot the model results.
