@@ -1,0 +1,167 @@
+---
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  pdf_document: default
+  html_document: default
+---
+# Exercise 2: Hierarchical Models & Signal Detection Theory
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r packages}
+# empty environment
+rm(list = ls())
+
+# load libraries
+library(brms)
+library(tidyverse)
+library(here)
+```
+## A - Fit Bayesian GLMs to the aggregated data
+
+1. Load the aggregated data of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`. 
+
+This data set contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
+
+```{r load_data}
+data_Williams2022_agg <- read.table(here("data","exercise2_Williams2022_exp2_aggregated.txt"))
+head(data_Williams2022_agg)
+```
+
+2. Fit Bayesian GLMs with either proportion correct, Cowan's K and dprime as the dependent variable
+
+Use the `brm` function to specify that the DV should vary as a function of the `isAdaptive` between subject manipulation. Set appropriate priors for the `b` coefficients for the respective models. Use the `default_prior` function to get information which priors are set as a default by `brms`.
+Set the `sample_prior` option to `TRUE` when fitting the model.
+
+```{r GLM_propCorrect}
+# default_prior(prop_correct ~ isAdaptive, data = data_Williams2022_agg)
+
+my_priors_pc <- prior(normal(0,0.25), class = b)
+
+fit_pc <- brm(
+  formula = bf(prop_correct ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  data = data_Williams2022_agg,
+  family = gaussian(),
+  cores = 4,
+  prior = my_priors_pc,
+  sample_prior = TRUE,
+  backend = "cmdstanr",
+  refresh = 0
+)
+```
+
+```{r GLM_CowansK}
+default_prior(K ~ isAdaptive, data = data_Williams2022_agg)
+
+my_priors_CowansK <- prior(normal(0,1), class = b)
+
+fit_CowansK <- brm(
+  formula = bf(K ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  data = data_Williams2022_agg,
+  family = gaussian(),
+  cores = 4,
+  prior = my_priors_CowansK,
+  sample_prior = TRUE,
+  backend = "cmdstanr",
+  refresh = 0
+)
+```
+
+```{r GLM_dprime}
+default_prior(dprime ~ isAdaptive, data = data_Williams2022_agg)
+
+my_priors_dprime <- prior(normal(0,1), class = b)
+
+fit_dprime <- brm(
+  formula = bf(dprime ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  data = data_Williams2022_agg,
+  family = gaussian(),
+  cores = 4,
+  prior = my_priors_dprime,
+  sample_prior = TRUE,
+  backend = "cmdstanr",
+  refresh = 0
+)
+```
+
+3. Quantify the strength of evidence for or against an effect of the manipulation
+
+The `hypothesis` function allows to specify to-be-tested hypothesis for any GLM fitted with `brms`. For this you need to pass the `brmfit` object and a vector of character strings specifying the hypothesis you want to test.
+
+```{r hypothesis_pc}
+hypothesis(fit_pc,
+           "isAdaptiveyes = 0")
+```
+
+```{r hypothesis_CowansK}
+hypothesis(fit_CowansK,
+           "isAdaptiveyes = 0")
+```
+
+```{r hypothesis_dprime}
+hypothesis(fit_dprime,
+           "isAdaptiveyes = 0")
+```
+
+## B - Fit Bayesian-hierarchical SDT model to the data
+
+1. Load the non-aggregated data of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`
+
+This data contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
+
+```{r load_data2}
+data_Williams2022 <- read.table(here("data","exercise2_Williams2022_exp2.txt"))
+head(data_Williams2022)
+```
+
+2. Specify the non-linear formula to fit an SDT model with this data
+
+Use the `brmsformula` function to specify the non-linear formula implementing an SDT model in a GLM. Predict both `dprime` and the `criterion` by the `isAdaptive` manipulation.
+
+```{r sdt_formula}
+sdt_formula <- bf(
+  sum_saysame | trials(n_trials) ~ -crit + was_same_trial * dprime,
+  dprime ~ 1 + isAdaptive + (1 | id),
+  crit ~ 1 + isAdaptive + (1 | id),
+  nl = TRUE
+)
+```
+
+3. Fit the SDT model to the data
+
+Pass the `brmsformula` to the `brm` function and select to fit a binomial model with a probit link function. Again consider specifying adequate priors for the parameters. And use the `hypothesis` function to test on which parameters of the SDT model the `isAdaptive` manipulation has an effect.
+
+```{r priors_sdt}
+default_prior(sdt_formula, data = data_Williams2022, family = binomial(link = "probit"))
+
+my_priors_sdt <- prior(normal(0,1), class = b, nlpar = crit) +
+  prior(normal(0,1), class = b, nlpar = dprime)
+```
+
+```{r fit_sdt}
+fit_sdt <- brm(
+  formula = sdt_formula,
+  data = data_Williams2022,
+  family = binomial(link = "probit"),
+  prior = my_priors_sdt,
+  sample_prior = T,
+  cores = 4,
+  refresh = 0,
+  backend = "cmdstanr"
+)
+
+# plot model predicted effects
+conditional_effects(fit_sdt, nlpar = "dprime", effects = "isAdaptive")
+conditional_effects(fit_sdt, nlpar = "crit", effects = "isAdaptive")
+
+# test if manipulation had effects on SDT parameters
+hypothesis(fit_sdt,
+           c("dprime_isAdaptiveyes = 0",
+             "crit_isAdaptiveyes = 0"))
+```
+
+
+

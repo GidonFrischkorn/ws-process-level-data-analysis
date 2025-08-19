@@ -20,7 +20,7 @@ Your task is to:
 2.  Compute the average of 3, 5, 10, and 20 samples from the distribution for 200 times.
 3.  Plot these averages in a histogram and try overlaying the density of the normal distribution with the mean and standard deviation of the plotted values
 
-```{r, }
+```{r}
 
 # empty environment
 rm(list = ls())
