@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 # Solutions: Exercise 1: Central Limit Theorem
 
-The central limit theorem states that the sum or average of random samples from any probability distribution will approximate a normal distribution, with a sufficient number of samples. This exercise should help you getting an intuition what a "sufficient number" of samples is and what this implies for the assumption of the normal distribution in experimental settings.
+The central limit theorem states that the sum or average of random samples from any probability distribution with a mean and standard deviation smaller then infinity will approximate a normal distribution, with a sufficient number of samples. This exercise should help you getting an intuition what a "sufficient number" of samples is and what this implies for the assumption of the normal distribution in experimental settings.
 
 Your task is to:
 
@@ -35,7 +35,7 @@ We first define the elements from which we sample (1 to 30). Then we create a ve
 
 ```{r}
 
-sample_elements <- 1:30
+sample_elements <- 1:5
 
 my_probs <- bmm::softmax(rnorm(length(sample_elements) - 1))
 my_samples <- sample(sample_elements, size = 3, replace = T, prob = my_probs)
@@ -60,7 +60,7 @@ n_rep <- 200
 # create dataframe to store simulation results
 sim_results <- data.frame(
   sim_run = 1:n_rep,
-  avg_sample3 = numeric(n_rep),
+  avg_sample2 = numeric(n_rep),
   avg_sample5 = numeric(n_rep),
   avg_sample10 = numeric(n_rep),
   avg_sample20 = numeric(n_rep)
@@ -70,7 +70,7 @@ sim_results <- data.frame(
 for (i in 1:200) {
   my_samples <- sample(sample_elements, size = 20, replace = T, prob = my_probs)
   
-  sim_results$avg_sample3[i] <- mean(my_samples[1:3])
+  sim_results$avg_sample2[i] <- mean(my_samples[1:2])
   sim_results$avg_sample5[i] <- mean(my_samples[1:5])
   sim_results$avg_sample10[i] <- mean(my_samples[1:10])
   sim_results$avg_sample20[i] <- mean(my_samples[1:20])
@@ -90,7 +90,7 @@ df_results_plot <- sim_results %>%
   pivot_longer(cols = starts_with("avg_")) %>% 
   mutate(sample_size = str_split_i(name,"_",2))
 
-# calculate the overall mean and sd for samples with 3, 5, 10, and 20 samples
+# calculate the overall mean and sd for samples with 2, 5, 10, and 20 samples
 average_stat_sim <- df_results_plot %>% 
   
   # calculate mean and sd for each sample size samples
