@@ -1,7 +1,9 @@
 ---
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Exercise 1: Central Limit Theorem
@@ -10,6 +12,6 @@ The central limit theorem states that the sum or average of random samples from 
 
 Your task is to:
 
-1. choose any - ideally asymmetric or totally random (e.g. using the `sample` function) - probability distribution
-2. compute the average of 3, 5, 10, and 20 samples from the distribution for 200 times. 
+1. Choose any - ideally asymmetric or totally random (e.g. using the `sample` function) - probability distribution
+2. Compute the average of 3, 5, 10, and 20 samples from the distribution for 200 times. 
 3. Plot these averages in a histogram and try overlaying the density of the normal distribution with the mean and standard deviation of the plotted values
