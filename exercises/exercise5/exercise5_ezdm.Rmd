@@ -1,5 +1,5 @@
 ---
-title: "Exercise 4: EZ-Diffusion Model"
+title: "Exercise 5: EZ-Diffusion Model"
 output: html_document
 ---
 
