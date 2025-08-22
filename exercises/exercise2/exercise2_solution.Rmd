@@ -2,15 +2,15 @@
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
-
-# Exercise 2: Hierarchical Models & Signal Detection Theory
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
+
+# Solutions: Exercise 2: Hierarchical Models & Signal Detection Theory
 
 ```{r packages}
 # empty environment
@@ -136,7 +136,7 @@ hypothesis(fit_dprime,
 
 ## B - Fit Bayesian-hierarchical SDT model to the data
 
-1.  Load the **non-aggregated data** of experiment 2 of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`.
+1. Load the **non-aggregated data** of experiment 2 of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`.
 
 This data contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
 
@@ -161,7 +161,6 @@ sdt_formula <- bf(
 3.  Fit the SDT model to the data.
 
 Pass the `brmsformula` to the `brm` function and fit a binomial model with a **probit** link function.
-
 
 Again consider specifying adequate priors for the parameters and plot the model predictions (hint: `conditional_effects()`). Use the `hypothesis` function to test on which parameters of the SDT model the `isAdaptive` manipulation has an effect.
 

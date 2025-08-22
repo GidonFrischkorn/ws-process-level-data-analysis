@@ -2,38 +2,39 @@
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 # Exercise 2: Hierarchical Models & Signal Detection Theory
 
 ## A - Fit Bayesian GLMs to the aggregated data
 
-1. Load the aggregated data of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`. 
+1.  Load the **aggregated data** of experiment 2 of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`.
 
 This data set contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
 
-2. Fit Bayesian GLMs with either proportion correct, Cowan's K and dprime as the dependent variable
+2.  Fit Bayesian GLMs with either proportion correct, Cowan's K or dprime as the dependent variable.
 
-Use the `brm` function to specify that the DV should vary as a function of the `isAdaptive` between subject manipulation. Set appropriate priors for the `b` coefficients for the respective models. Use the `default_prior` function to get information which priors are set as a default by `brms`.
-Set the `sample_prior` option to `TRUE` when fitting the model.
+Use the `brm` function to specify that the dependent variable should vary as a function of the `isAdaptive` between-subject manipulation. Set appropriate priors for the `b` coefficients for the respective models. Use the `default_prior` function to get information which priors are set as a default by `brms`. Set the `sample_prior` option to `TRUE` when fitting the model. We need this option in order to perform hypothesis tests with the `hypothesis()` function later on.
 
-3. Quantify the strength of evidence for or against an effect of the manipulation
+3.  Quantify the strength of evidence for or against an effect of the manipulation.
 
-The `hypothesis` function allows to specify to-be-tested hypothesis for any GLM fitted with `brms`. For this you need to pass the `brmfit` object and a vector of character strings specifying the hypothesis you want to test.
+The `hypothesis` function allows to specify to-be-tested hypotheses for any GLM fitted with `brms`. For this you need to pass the `brmfit` object and a vector of character strings specifying the hypothesis you want to test. Usually you formulate the hypothesis in form of a null hypothesis. In order to use this function you need to set in your model the `sample_prior` option to `TRUE`.
 
 ## B - Fit Bayesian-hierarchical SDT model to the data
 
-1. Load the non-aggregated data of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`
+1. Load the **non-aggregated data** of experiment 2 of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`.
 
 This data contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
 
-2. Specify the non-linear formula to fit an SDT model with this data
+2.  Specify the non-linear formula to fit an SDT model with this data.
 
 Use the `brmsformula` function to specify the non-linear formula implementing an SDT model in a GLM. Predict both `dprime` and the `criterion` by the `isAdaptive` manipulation.
 
-3. Fit the SDT model to the data
+3.  Fit the SDT model to the data.
 
-Pass the `brmsformula` to the `brm` function and select to fit a binomial model with a probit link function. Again consider specifying adequate priors for the parameters. And use the `hypothesis` function to test on which parameters of the SDT model the `isAdaptive` manipulation has an effect.
+Pass the `brmsformula` to the `brm` function and fit a binomial model with a **probit** link function.
+
+Again consider specifying adequate priors for the parameters and plot the model predictions (hint: `conditional_effects()`). Use the `hypothesis` function to test on which parameters of the SDT model the `isAdaptive` manipulation has an effect.
 
