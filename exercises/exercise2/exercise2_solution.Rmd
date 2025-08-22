@@ -24,7 +24,7 @@ library(here)
 
 ## A - Fit Bayesian GLMs to the aggregated data
 
-1.  Load the aggregated data of experiment 2 of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`.
+1.  Load the **aggregated data** of experiment 2 of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`.
 
 This data set contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
 
@@ -136,7 +136,7 @@ hypothesis(fit_dprime,
 
 ## B - Fit Bayesian-hierarchical SDT model to the data
 
-1.  Load the non-aggregated data of experiment 2 of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`.
+1.  Load the **non-aggregated data** of experiment 2 of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`.
 
 This data contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
 
