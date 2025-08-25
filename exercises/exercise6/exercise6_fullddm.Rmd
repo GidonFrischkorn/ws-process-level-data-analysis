@@ -1,0 +1,100 @@
+---
+title: "Exercise 6: Full Diffusion Decision Model"
+output: html_document
+---
+
+In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the full Diffusion Decision Model. 
+
+Your task is to load one of the data sets we prepared for this exercise, either `exc4_VisualSearch.txt` or `exc5_ColorJudgement.txt`.
+
+The Color Judgement data set contains data of 50 participants that completed a Color Judgement task. In this task participants saw an array of blue and red dots and should decide if the array contained more blue or red dots. There were two difficulty levels, the easy level in which 60% of the dots were either blue or red, and the difficult level in which 52% of the dots were either blue or red.
+
+Your task is:
+
+1. to specify the `ddm` model object
+3. specify a model formula predicting which parameters you assume to vary as a function of the difficulty level
+4. estimate the model using the `bmm` function and interpret the results with respect to the experimental effects on the model parameters
+ 
+## Solution
+
+```{r setup, message=FALSE}
+# Load required packages
+library(bmm)
+library(tidyverse)
+library(here)
+```
+
+### Prepare Data
+
+First, we need to aggregate the data so that we can analyze our data with the `ezdm` using the `bmm` function. For this, we need to calcualte the mean reaction time, the varianve of the reaction time, the number of correct responses, and the number of trials in each cell of the experimental design.
+
+```{r aggregate data}
+ddm_data <- read.table(here("data","exc5_ColorJudgementTask.txt"),
+                        header = T, sep = ",")
+
+ddm_data$rt <- ddm_data$rt/1000
+ddm_data$resp_num <- ifelse(ddm_data$resp == "red",1,0)
+ddm_data$stim_num <- ifelse(ddm_data$correct_response == "red",1,-1)
+```
+
+### Specify Model object
+
+Next, we need to specify the model object to link which data columns are used to identify the `ezdm`
+
+```{r specify bmmodel}
+ddm_model <- ddm(rt = "rt", response = "resp_num")
+```
+
+### Specify the BMM formula
+
+Now, we can consider which parameters are affected by the experimental manipulations. First, let's see how the `ezdm` parameter vary as a function of the difficutly manipulation.
+
+```{r specify bmmformula}
+ddm_formula <- bmf(
+  drift ~ 0 + correct_response:condition + (0 + correct_response:condition | participant_id),
+  bound ~ 1 + (1 | participant_id),
+  ndt ~ 0 + condition + (0 + condition | participant_id),
+  zr ~ 1 + (1 | participant_id)
+)
+default_prior(ddm_formula, data = ddm_data, model = ddm_model)
+```
+
+### Estimate `ezdm` with the `bmm` function
+
+Finally, we can estimate the model using our aggregated data, the `bmmodel` object we created and the `bmmformula` specifying how the model parameters should change over experimental condition.
+
+```{r Estimate ezdm, echo=TRUE, message=FALSE, warning=FALSE}
+ddm_fit <- bmm(
+  formula = ddm_formula,
+  data = ddm_data,
+  model = ddm_model,
+  cores = 4,
+  sample_prior = TRUE,
+  backend = "cmdstanr"
+)
+```
+
+
+```{r print summary}
+summary(ddm_fit)
+```
+
+```{r}
+ddm_hypothesis <- c(
+  drift_easy = "drift_correct_responseblue:conditioneasy = -drift_correct_responsered:conditioneasy",
+  drift_hard = "drift_correct_responseblue:conditionhard = -drift_correct_responsered:conditionhard",
+  bias = "zr_Intercept = 0",
+  ndt_cond = "ndt_conditioneasy = ndt_conditionhard",
+  drift_cond = "(drift_correct_responseblue:conditioneasy - drift_correct_responsered:conditioneasy)/2 =
+  (drift_correct_responseblue:conditionhard - drift_correct_responsered:conditionhard)/2"
+)
+
+ddm_hypothesis_results <- brms::hypothesis(
+  ddm_fit,
+  ddm_hypothesis
+)
+
+plot(ddm_hypothesis_results)
+1/abs(ezdm_hypothesis_results$hypothesis$Evid.Ratio)
+```
+
