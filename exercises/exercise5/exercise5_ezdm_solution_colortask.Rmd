@@ -1,27 +1,25 @@
 ---
-title: "Exercise 5: EZ-Diffusion Model"
-output: html_document
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  html_document: default
+  pdf_document: default
 ---
+
+# Solutions: Exercise 5 - EZ-Diffusion Model
 
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the ez-Diffusion Model. This implementation allows for a fast parameter estimation while still providing acceptable recovery of three parameters of interest:
 
 1. drift rate = the rate of evidence accumulation
-2. boundary seperation = the seperation of decision thresholds
+2. boundary separation = the seperation of decision thresholds
 3. non-decision time = the time for non-decisional processes.
 
 Your task is to load one of the data sets we prepared for this exercise, either `exc4_VisualSearch.txt` or `exc5_ColorJudgement.txt`.
 
-The Color Judgement data set contains data of 50 participants that completed a Color Judgement task. In this task participants saw an array of blue and red dots and should decide if the array contained more blue or red dots. There were two difficulty levels, the easy level in which 60% of the dots were either blue or red, and the difficult level in which 52% of the dots were either blue or red.
+The *Color Judgement* data set contains data of 50 participants that completed a Color Judgement task. In this task participants saw an array of blue and red dots and should decide if the array contained more blue or red dots. There were two difficulty levels, the easy level in which 60% of the dots were either blue or red, and the difficult level in which 52% of the dots were either blue or red.
 
-[comment]: Add description for visual search data here.
+The *Visual Search* data set contains data for 33 participants that completed the Visual Search task. In this task, participants were presented a color cue, a positive (the target color), a negative (the non target color) or neutral (not part of the visual search display). Participants had to look for a "C" that either looked upwards or downwards and report it´s direction with the arrow key.
 
-Your task is:
-
-1. aggregate the data, so that we can estimate the `ezdm` 
-2. to specify the `ezdm` model object matching the aggreaged data of the task
-3. specify a model formula predicting which parameters you assume to vary as a function of the difficulty level
-4. estimate the model using the `bmm` function and interpret the results with respect to the experimental effects on the model parameters
- 
 ## Solution
 
 ```{r setup, message=FALSE}
@@ -31,7 +29,7 @@ library(tidyverse)
 library(here)
 ```
 
-### Prepare Data
+### 1) aggregate the data, so that we can estimate the `ezdm` 
 
 First, we need to aggregate the data so that we can analyze our data with the `ezdm` using the `bmm` function. For this, we need to calcualte the mean reaction time, the varianve of the reaction time, the number of correct responses, and the number of trials in each cell of the experimental design.
 
@@ -53,7 +51,7 @@ ezdm_data_agg$condition <- as.factor(ezdm_data_agg$condition)
 contrasts(ezdm_data_agg$condition) <- bayestestR::contr.equalprior
 ```
 
-### Specify Model object
+### 2) to specify the `ezdm` model object matching the aggregated data of the task
 
 Next, we need to specify the model object to link which data columns are used to identify the `ezdm`
 
@@ -62,7 +60,7 @@ ezdm_model <- ezdm(mean_rt = "mean_rt", var_rt = "var_rt", n_correct = "n_correc
                    n_trials = "n_trials")
 ```
 
-### Specify the BMM formula
+### 3) specify a model formula predicting which parameters you assume to vary as a function of the experimental manipulations (i.e. difficulty level or cue type)
 
 Now, we can consider which parameters are affected by the experimental manipulations. First, let's see how the `ezdm` parameter vary as a function of the difficutly manipulation.
 
@@ -74,7 +72,8 @@ ezdm_formula <- bmf(
 )
 ```
 
-### Estimate `ezdm` with the `bmm` function
+### 4) estimate the model using the `bmm` function and interpret the results with respect to the experimental effects on the model parameters
+ 
 
 Finally, we can estimate the model using our aggregated data, the `bmmodel` object we created and the `bmmformula` specifying how the model parameters should change over experimental condition.
 
@@ -84,7 +83,9 @@ ezdm_fit <- bmm(
   data = ezdm_data_agg,
   model = ezdm_model,
   cores = 4,
-  sample_prior = TRUE
+  sample_prior = TRUE,
+  refresh = 0,
+  file = here("models","ezdm_colortask_exc5")
 )
 ```
 
@@ -107,4 +108,3 @@ ezdm_hypothesis_results <- brms::hypothesis(
 plot(ezdm_hypothesis_results)
 1/abs(ezdm_hypothesis_results$hypothesis$Evid.Ratio)
 ```
-

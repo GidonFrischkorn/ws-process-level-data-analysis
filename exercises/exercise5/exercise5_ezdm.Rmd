@@ -1,9 +1,12 @@
 ---
-title: "Exercise 5: EZ-Diffusion Model"
-output: 
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
   html_document: default
   pdf_document: default
 ---
+
+# Exercise 5 - EZ-Diffusion Model
 
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the ez-Diffusion Model. This implementation allows for a fast parameter estimation while still providing acceptable recovery of three parameters of interest:
 
@@ -21,5 +24,5 @@ Your task is:
 
 1. aggregate the data, so that we can estimate the `ezdm` 
 2. to specify the `ezdm` model object matching the aggregated data of the task
-3. specify a model formula predicting which parameters you assume to vary as a function of the difficulty level
+3. specify a model formula predicting which parameters you assume to vary as a function of the experimental manipulations (i.e. difficulty level or cue type)
 4. estimate the model using the `bmm` function and interpret the results with respect to the experimental effects on the model parameters
