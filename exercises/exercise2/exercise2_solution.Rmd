@@ -2,15 +2,15 @@
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
-
-# Exercise 2: Hierarchical Models & Signal Detection Theory
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
+
+# Solutions: Exercise 2: Hierarchical Models & Signal Detection Theory
 
 ```{r packages}
 # empty environment
@@ -24,102 +24,146 @@ library(here)
 
 ## A - Fit Bayesian GLMs to the aggregated data
 
-1. Load the aggregated data of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`. 
+### 1)  Load the **aggregated data** of experiment 2 of Williams et al. (2022).
 
-This data set contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
+This data set (filename: `exercise2_Williams2022_exp2_aggregated.txt`) contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
 
 ```{r load_data}
 data_Williams2022_agg <- read.table(here("data","exercise2_Williams2022_exp2_aggregated.txt"))
 head(data_Williams2022_agg)
 ```
 
-2. Fit Bayesian GLMs with either proportion correct, Cowan's K and dprime as the dependent variable
+### 2)  Fit Bayesian GLMs with either proportion correct, Cowan's K or dprime as the dependent variable.
 
-Use the `brm` function to specify that the DV should vary as a function of the `isAdaptive` between subject manipulation. Set appropriate priors for the `b` coefficients for the respective models. Use the `default_prior` function to get information which priors are set as a default by `brms`.
-Set the `sample_prior` option to `TRUE` when fitting the model.
+Use the `brm` function to specify that the dependent variable should vary as a function of the `isAdaptive` between-subject manipulation. Set appropriate priors for the `b` coefficients for the respective models. Use the `default_prior` function to get information which priors are set as a default by `brms`. Set the `sample_prior` option to `TRUE` when fitting the model. We need this option in order to perform hypothesis tests with the `hypothesis()` function later on.
 
 ```{r GLM_propCorrect}
-# default_prior(prop_correct ~ isAdaptive, data = data_Williams2022_agg)
 
+# check default priors
+default_prior(prop_correct ~ isAdaptive, data = data_Williams2022_agg)
+
+# change priors for parameters of class b
 my_priors_pc <- prior(normal(0,0.25), class = b)
 
+# specify the brmsformula
+pc_formula <- bf(
+  prop_correct ~ 1 + isAdaptive, 
+  sigma ~ 1 + isAdaptive
+)
+
+# fit model
 fit_pc <- brm(
-  formula = bf(prop_correct ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  formula = pc_formula,
   data = data_Williams2022_agg,
   family = gaussian(),
   cores = 4,
   prior = my_priors_pc,
   sample_prior = TRUE,
   backend = "cmdstanr",
-  refresh = 0
+  refresh = 0,
+  file = here("models", "model_sdt_glm_pc"),
+  file_refit = "never"
 )
 ```
 
 ```{r GLM_CowansK}
+
+# check default priors
 default_prior(K ~ isAdaptive, data = data_Williams2022_agg)
 
+# change priors for parameters of class b
 my_priors_CowansK <- prior(normal(0,1), class = b)
 
+# specify the brmsformula
+CowansK_formula <- bf(
+  K ~ 1 + isAdaptive, 
+  sigma ~ 1 + isAdaptive
+)
+
+# fit model
 fit_CowansK <- brm(
-  formula = bf(K ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  formula = CowansK_formula,
   data = data_Williams2022_agg,
   family = gaussian(),
   cores = 4,
   prior = my_priors_CowansK,
   sample_prior = TRUE,
   backend = "cmdstanr",
-  refresh = 0
+  refresh = 0,
+  file = here("models", "model_sdt_glm_k"),
+  file_refit = "never"
 )
 ```
 
 ```{r GLM_dprime}
+
+# check default priors
 default_prior(dprime ~ isAdaptive, data = data_Williams2022_agg)
 
+# change priors for parameters of class b
 my_priors_dprime <- prior(normal(0,1), class = b)
 
+# specify the brmsformula
+dprime_formula <- bf(
+  dprime ~ 1 + isAdaptive, 
+  sigma ~ 1 + isAdaptiv
+)
+
+# fit model
 fit_dprime <- brm(
-  formula = bf(dprime ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  formula = dprime_formula,
   data = data_Williams2022_agg,
   family = gaussian(),
   cores = 4,
   prior = my_priors_dprime,
   sample_prior = TRUE,
   backend = "cmdstanr",
-  refresh = 0
+  refresh = 0,
+  file = here("models", "model_sdt_glm_dprime"),
+  file_refit = "never"
 )
 ```
 
-3. Quantify the strength of evidence for or against an effect of the manipulation
+### 3)  Quantify the strength of evidence for or against an effect of the manipulation.
 
-The `hypothesis` function allows to specify to-be-tested hypothesis for any GLM fitted with `brms`. For this you need to pass the `brmfit` object and a vector of character strings specifying the hypothesis you want to test.
+The `hypothesis` function allows to specify to-be-tested hypotheses for any GLM fitted with `brms`. For this you need to pass the `brmfit` object and a vector of character strings specifying the hypothesis you want to test. Usually you formulate the hypothesis in form of a null hypothesis. In order to use this function you need to set in your model the `sample_prior` option to `TRUE`.
 
 ```{r hypothesis_pc}
+
+# proportion correct
 hypothesis(fit_pc,
            "isAdaptiveyes = 0")
+
 ```
 
 ```{r hypothesis_CowansK}
+
+# Cowan's K
 hypothesis(fit_CowansK,
            "isAdaptiveyes = 0")
+
 ```
 
 ```{r hypothesis_dprime}
+
+# dPrime
 hypothesis(fit_dprime,
            "isAdaptiveyes = 0")
+
 ```
 
 ## B - Fit Bayesian-hierarchical SDT model to the data
 
-1. Load the non-aggregated data of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`
+### 1) Load the **non-aggregated data** of experiment 2 of Williams et al. (2022).
 
-This data contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
+This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms (`sum_sayold`) for trials with targets and foils (`was_same_trial`) as test stimuli.
 
 ```{r load_data2}
 data_Williams2022 <- read.table(here("data","exercise2_Williams2022_exp2.txt"))
 head(data_Williams2022)
 ```
 
-2. Specify the non-linear formula to fit an SDT model with this data
+### 2)  Specify the non-linear formula to fit an SDT model with this data.
 
 Use the `brmsformula` function to specify the non-linear formula implementing an SDT model in a GLM. Predict both `dprime` and the `criterion` by the `isAdaptive` manipulation.
 
@@ -132,38 +176,55 @@ sdt_formula <- bf(
 )
 ```
 
-3. Fit the SDT model to the data
+### 3)  Fit the SDT model to the data.
 
-Pass the `brmsformula` to the `brm` function and select to fit a binomial model with a probit link function. Again consider specifying adequate priors for the parameters. And use the `hypothesis` function to test on which parameters of the SDT model the `isAdaptive` manipulation has an effect.
+Pass the `brmsformula` to the `brm` function and fit a binomial model with a **probit** link function.
+
+Again consider specifying adequate priors for the parameters and plot the model predictions (hint: `conditional_effects()`). Use the `hypothesis` function to test on which parameters of the SDT model the `isAdaptive` manipulation has an effect.
+
+Priors: 
 
 ```{r priors_sdt}
+
+# check default priors
 default_prior(sdt_formula, data = data_Williams2022, family = binomial(link = "probit"))
 
+# adapt priors
 my_priors_sdt <- prior(normal(0,1), class = b, nlpar = crit) +
   prior(normal(0,1), class = b, nlpar = dprime)
 ```
 
+Model:
+
 ```{r fit_sdt}
+
+# fit model
 fit_sdt <- brm(
   formula = sdt_formula,
   data = data_Williams2022,
   family = binomial(link = "probit"),
   prior = my_priors_sdt,
-  sample_prior = T,
+  sample_prior = TRUE,
   cores = 4,
   refresh = 0,
-  backend = "cmdstanr"
+  backend = "cmdstanr",
+  file = here("models", "model_sdt"),
+  file_refit = "never"
 )
 
 # plot model predicted effects
 conditional_effects(fit_sdt, nlpar = "dprime", effects = "isAdaptive")
 conditional_effects(fit_sdt, nlpar = "crit", effects = "isAdaptive")
 
+```
+
+Hypotheses:
+
+```{r}
+
 # test if manipulation had effects on SDT parameters
 hypothesis(fit_sdt,
            c("dprime_isAdaptiveyes = 0",
              "crit_isAdaptiveyes = 0"))
 ```
-
-
 
