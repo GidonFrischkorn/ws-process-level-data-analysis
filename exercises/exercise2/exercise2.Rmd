@@ -10,9 +10,9 @@ output:
 
 ## A - Fit Bayesian GLMs to the aggregated data
 
-1.  Load the **aggregated data** of experiment 2 of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`.
+1.  Load the **aggregated data** of experiment 2 of Williams et al. (2022)
 
-This data set contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
+This data set (filename: `exercise2_Williams2022_exp2_aggregated.txt`) contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
 
 2.  Fit Bayesian GLMs with either proportion correct, Cowan's K or dprime as the dependent variable.
 
@@ -24,9 +24,9 @@ The `hypothesis` function allows to specify to-be-tested hypotheses for any GLM 
 
 ## B - Fit Bayesian-hierarchical SDT model to the data
 
-1. Load the **non-aggregated data** of experiment 2 of Williams et al. (2022): `exercise2_Williams2022_exp2.txt`.
+1. Load the **non-aggregated data** of experiment 2 of Williams et al. (2022)
 
-This data contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
+This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
 
 2.  Specify the non-linear formula to fit an SDT model with this data.
 

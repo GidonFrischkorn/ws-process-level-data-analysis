@@ -369,16 +369,16 @@ library(tidyverse)
 library(here)</code></pre>
 <div id="a---fit-bayesian-glms-to-the-aggregated-data" class="section level2">
 <h2>A - Fit Bayesian GLMs to the aggregated data</h2>
-<ol style="list-style-type: decimal">
-<li>Load the <strong>aggregated data</strong> of experiment 2 of
-Williams et al. (2022)
-<code>exercise2_Williams2022_exp2_aggregated.txt</code>.</li>
-</ol>
-<p>This data set contains aggregated performance indices from a Change
-Detection Task with Set Size 8 and a between subject manipulation
-<code>isAdaptive</code>. The manipulation entailed a prompt pushing
-participants to respond equally often with <code>same</code> and
-<code>different</code> to achieve a less biased response pattern.</p>
+<div id="load-the-aggregated-data-of-experiment-2-of-williams-et-al.-2022." class="section level3">
+<h3>1) Load the <strong>aggregated data</strong> of experiment 2 of
+Williams et al. (2022).</h3>
+<p>This data set (filename:
+<code>exercise2_Williams2022_exp2_aggregated.txt</code>) contains
+aggregated performance indices from a Change Detection Task with Set
+Size 8 and a between subject manipulation <code>isAdaptive</code>. The
+manipulation entailed a prompt pushing participants to respond equally
+often with <code>same</code> and <code>different</code> to achieve a
+less biased response pattern.</p>
 <pre class="r"><code>data_Williams2022_agg &lt;- read.table(here(&quot;data&quot;,&quot;exercise2_Williams2022_exp2_aggregated.txt&quot;))
 head(data_Williams2022_agg)</code></pre>
 <pre><code>##                id isAdaptive prop_correct        K    dprime       crit
@@ -388,10 +388,10 @@ head(data_Williams2022_agg)</code></pre>
 ## 4 1p2orrruwowkyfk        yes    0.8600000 5.760000 2.2012469 0.19369466
 ## 5 1sj18cefeen6xdq         no    0.6266667 2.026667 0.7562075 0.56297078
 ## 6 1t9ccets6d4jmh1         no    0.7111111 3.377778 1.1321919 0.18377351</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>Fit Bayesian GLMs with either proportion correct, Cowan’s K or
-dprime as the dependent variable.</li>
-</ol>
+</div>
+<div id="fit-bayesian-glms-with-either-proportion-correct-cowans-k-or-dprime-as-the-dependent-variable." class="section level3">
+<h3>2) Fit Bayesian GLMs with either proportion correct, Cowan’s K or
+dprime as the dependent variable.</h3>
 <p>Use the <code>brm</code> function to specify that the dependent
 variable should vary as a function of the <code>isAdaptive</code>
 between-subject manipulation. Set appropriate priors for the
@@ -416,9 +416,15 @@ default_prior(prop_correct ~ isAdaptive, data = data_Williams2022_agg)</code></p
 <pre class="r"><code># change priors for parameters of class b
 my_priors_pc &lt;- prior(normal(0,0.25), class = b)
 
+# specify the brmsformula
+pc_formula &lt;- bf(
+  prop_correct ~ 1 + isAdaptive, 
+  sigma ~ 1 + isAdaptive
+)
+
 # fit model
 fit_pc &lt;- brm(
-  formula = bf(prop_correct ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  formula = pc_formula,
   data = data_Williams2022_agg,
   family = gaussian(),
   cores = 4,
@@ -444,9 +450,15 @@ default_prior(K ~ isAdaptive, data = data_Williams2022_agg)</code></pre>
 <pre class="r"><code># change priors for parameters of class b
 my_priors_CowansK &lt;- prior(normal(0,1), class = b)
 
+# specify the brmsformula
+CowansK_formula &lt;- bf(
+  K ~ 1 + isAdaptive, 
+  sigma ~ 1 + isAdaptive
+)
+
 # fit model
 fit_CowansK &lt;- brm(
-  formula = bf(K ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  formula = CowansK_formula,
   data = data_Williams2022_agg,
   family = gaussian(),
   cores = 4,
@@ -472,9 +484,15 @@ default_prior(dprime ~ isAdaptive, data = data_Williams2022_agg)</code></pre>
 <pre class="r"><code># change priors for parameters of class b
 my_priors_dprime &lt;- prior(normal(0,1), class = b)
 
+# specify the brmsformula
+dprime_formula &lt;- bf(
+  dprime ~ 1 + isAdaptive, 
+  sigma ~ 1 + isAdaptiv
+)
+
 # fit model
 fit_dprime &lt;- brm(
-  formula = bf(dprime ~ 1 + isAdaptive, sigma ~ 1 + isAdaptive),
+  formula = dprime_formula,
   data = data_Williams2022_agg,
   family = gaussian(),
   cores = 4,
@@ -485,10 +503,10 @@ fit_dprime &lt;- brm(
   file = here(&quot;models&quot;, &quot;model_sdt_glm_dprime&quot;),
   file_refit = &quot;never&quot;
 )</code></pre>
-<ol start="3" style="list-style-type: decimal">
-<li>Quantify the strength of evidence for or against an effect of the
-manipulation.</li>
-</ol>
+</div>
+<div id="quantify-the-strength-of-evidence-for-or-against-an-effect-of-the-manipulation." class="section level3">
+<h3>3) Quantify the strength of evidence for or against an effect of the
+manipulation.</h3>
 <p>The <code>hypothesis</code> function allows to specify to-be-tested
 hypotheses for any GLM fitted with <code>brms</code>. For this you need
 to pass the <code>brmfit</code> object and a vector of character strings
@@ -536,15 +554,15 @@ hypothesis(fit_dprime,
 ## for two-sided hypotheses, the value tested against lies outside the 95%-CI.
 ## Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
 </div>
+</div>
 <div id="b---fit-bayesian-hierarchical-sdt-model-to-the-data" class="section level2">
 <h2>B - Fit Bayesian-hierarchical SDT model to the data</h2>
-<ol style="list-style-type: decimal">
-<li>Load the <strong>non-aggregated data</strong> of experiment 2 of
-Williams et al. (2022):
-<code>exercise2_Williams2022_exp2.txt</code>.</li>
-</ol>
-<p>This data contains more detailed data on the number of hits and false
-alarms for trials with targets and foils as test stimuli.</p>
+<div id="load-the-non-aggregated-data-of-experiment-2-of-williams-et-al.-2022." class="section level3">
+<h3>1) Load the <strong>non-aggregated data</strong> of experiment 2 of
+Williams et al. (2022).</h3>
+<p>This data (filename: <code>exercise2_Williams2022_exp2.txt</code>)
+contains more detailed data on the number of hits and false alarms for
+trials with targets and foils as test stimuli.</p>
 <pre class="r"><code>data_Williams2022 &lt;- read.table(here(&quot;data&quot;,&quot;exercise2_Williams2022_exp2.txt&quot;))
 head(data_Williams2022)</code></pre>
 <pre><code>##                id isAdaptive was_same_trial sum_saysame sum_correct n_trials
@@ -561,10 +579,10 @@ head(data_Williams2022)</code></pre>
 ## 4    0.6755556
 ## 5    0.9600000
 ## 6    0.4400000</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>Specify the non-linear formula to fit an SDT model with this
-data.</li>
-</ol>
+</div>
+<div id="specify-the-non-linear-formula-to-fit-an-sdt-model-with-this-data." class="section level3">
+<h3>2) Specify the non-linear formula to fit an SDT model with this
+data.</h3>
 <p>Use the <code>brmsformula</code> function to specify the non-linear
 formula implementing an SDT model in a GLM. Predict both
 <code>dprime</code> and the <code>criterion</code> by the
@@ -575,9 +593,9 @@ formula implementing an SDT model in a GLM. Predict both
   crit ~ 1 + isAdaptive + (1 | id),
   nl = TRUE
 )</code></pre>
-<ol start="3" style="list-style-type: decimal">
-<li>Fit the SDT model to the data.</li>
-</ol>
+</div>
+<div id="fit-the-sdt-model-to-the-data." class="section level3">
+<h3>3) Fit the SDT model to the data.</h3>
 <p>Pass the <code>brmsformula</code> to the <code>brm</code> function
 and fit a binomial model with a <strong>probit</strong> link
 function.</p>
@@ -654,6 +672,7 @@ hypothesis(fit_sdt,
 ## &#39;*&#39;: For one-sided hypotheses, the posterior probability exceeds 95%;
 ## for two-sided hypotheses, the value tested against lies outside the 95%-CI.
 ## Posterior probabilities of point hypotheses assume equal prior probabilities.</code></pre>
+</div>
 </div>
 </div>
 
