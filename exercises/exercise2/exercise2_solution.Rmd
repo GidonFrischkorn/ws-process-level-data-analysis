@@ -156,7 +156,7 @@ hypothesis(fit_dprime,
 
 ### 1) Load the **non-aggregated data** of experiment 2 of Williams et al. (2022).
 
-This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
+This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms (`sum_sayold`) for trials with targets and foils (`was_same_trial`) as test stimuli.
 
 ```{r load_data2}
 data_Williams2022 <- read.table(here("data","exercise2_Williams2022_exp2.txt"))

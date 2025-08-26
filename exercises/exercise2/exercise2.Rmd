@@ -26,7 +26,7 @@ The `hypothesis` function allows to specify to-be-tested hypotheses for any GLM 
 
 1. Load the **non-aggregated data** of experiment 2 of Williams et al. (2022)
 
-This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms for trials with targets and foils as test stimuli.
+This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms (`sum_sayold`) for trials with targets and foils (`was_same_trial`) as test stimuli.
 
 2.  Specify the non-linear formula to fit an SDT model with this data.
 
