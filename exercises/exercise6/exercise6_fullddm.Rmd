@@ -1,9 +1,12 @@
 ---
-title: "Exercise 6: Full Diffusion Decision Model"
-output: 
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
   html_document: default
   pdf_document: default
 ---
+
+# Exercise 6: Full Diffusion Decision Model
 
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the full Diffusion Decision Model. 
 
@@ -13,7 +16,7 @@ The *Color Judgement* data set contains data of 50 participants that completed a
 
 The *Visual Search* data set contains data for 33 participants that completed the Visual Search task. In this task, participants were presented a color cue, a positive (the target color), a negative (the non target color) or neutral (not part of the visual search display). Participants had to look for a "C" that either looked upwards or downwards and report it´s direction with the arrow key.
 
-In this exercise, we implement the four parameter `ddm` and test if participants were biased in responding with one of the two response options (i.e. blue or red). For this we have to specify a `ddm` with the actual responses - that is blue or red - as the response boundaries. Thus, we will recode the `correct_response` variable into a numeric `response` variable, and then estimate the `drift` separetly for the target containing more blue or red dots.
+In this exercise, we implement the four parameter `ddm` and test if participants were biased in responding with one of the two response options (i.e. blue or red). For this we have to specify a `ddm` with the actual responses - that is blue or red - as the response boundaries. Thus, we will recode the `correct_response` variable into a numeric `response` variable, and then estimate the `drift` separately for the target containing more blue or red dots.
 
 Your task is:
 
