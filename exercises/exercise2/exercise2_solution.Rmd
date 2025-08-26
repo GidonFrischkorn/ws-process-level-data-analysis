@@ -5,6 +5,7 @@ output:
   pdf_document: default
   html_document: default
 ---
+
 # Exercise 2: Hierarchical Models & Signal Detection Theory
 
 ```{r setup, include=FALSE}
@@ -20,6 +21,7 @@ library(brms)
 library(tidyverse)
 library(here)
 ```
+
 ## A - Fit Bayesian GLMs to the aggregated data
 
 1. Load the aggregated data of Williams et al. (2022) `exercise2_Williams2022_exp2_aggregated.txt`. 

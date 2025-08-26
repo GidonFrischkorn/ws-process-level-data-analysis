@@ -1,6 +1,8 @@
 ---
 title: "Exercise 5: EZ-Diffusion Model"
-output: html_document
+output: 
+  html_document: default
+  pdf_document: default
 ---
 
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the ez-Diffusion Model. This implementation allows for a fast parameter estimation while still providing acceptable recovery of three parameters of interest:
@@ -11,9 +13,9 @@ In this exercise, we will have a look at estimating the parameters from the diff
 
 Your task is to load one of the data sets we prepared for this exercise, either `exc4_VisualSearch.txt` or `exc5_ColorJudgement.txt`.
 
-The Color Judgement data set contains data of 50 participants that completed a Color Judgement task. In this task participants saw an array of blue and red dots and should decide if the array contained more blue or red dots. There were two difficulty levels, the easy level in which 60% of the dots were either blue or red, and the difficult level in which 52% of the dots were either blue or red.
+The *Color Judgement* data set contains data of 50 participants that completed a Color Judgement task. In this task participants saw an array of blue and red dots and should decide if the array contained more blue or red dots. There were two difficulty levels, the easy level in which 60% of the dots were either blue or red, and the difficult level in which 52% of the dots were either blue or red.
 
-[comment]: Add description for visual search data here.
+The *Visual Search* data set contains data for 33 participants that completed the Visual Search task. In this task, participants were presented a color cue, a positive (the target color), a negative (the non target color) or neutral (not part of the visual search display). Participants had to look for a "C" that either looked upwards or downwards and report it´s direction with the arrow key.
 
 Your task is:
 

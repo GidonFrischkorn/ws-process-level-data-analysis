@@ -11,7 +11,7 @@
 
 
 
-<title>Exercise 5: EZ-Diffusion Model</title>
+<title>Exercise 6: Full Diffusion Decision Model</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,21 +348,15 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Exercise 5: EZ-Diffusion Model</h1>
+<h1 class="title toc-ignore">Exercise 6: Full Diffusion Decision
+Model</h1>
 
 </div>
 
 
 <p>In this exercise, we will have a look at estimating the parameters
 from the diffusion decision model using the hierarchical Bayesian
-implementation of the ez-Diffusion Model. This implementation allows for
-a fast parameter estimation while still providing acceptable recovery of
-three parameters of interest:</p>
-<ol style="list-style-type: decimal">
-<li>drift rate = the rate of evidence accumulation</li>
-<li>boundary separation = the seperation of decision thresholds</li>
-<li>non-decision time = the time for non-decisional processes.</li>
-</ol>
+implementation of the full Diffusion Decision Model.</p>
 <p>Your task is to load one of the data sets we prepared for this
 exercise, either <code>exc4_VisualSearch.txt</code> or
 <code>exc5_ColorJudgement.txt</code>.</p>
@@ -378,17 +372,33 @@ presented a color cue, a positive (the target color), a negative (the
 non target color) or neutral (not part of the visual search display).
 Participants had to look for a “C” that either looked upwards or
 downwards and report it´s direction with the arrow key.</p>
+<p>In this exercise, we implement the four parameter <code>ddm</code>
+and test if participants were biased in responding with one of the two
+response options (i.e. blue or red). For this we have to specify a
+<code>ddm</code> with the actual responses - that is blue or red - as
+the response boundaries. Thus, we will recode the
+<code>correct_response</code> variable into a numeric
+<code>response</code> variable, and then estimate the <code>drift</code>
+separetly for the target containing more blue or red dots.</p>
 <p>Your task is:</p>
 <ol style="list-style-type: decimal">
-<li>aggregate the data, so that we can estimate the
-<code>ezdm</code></li>
-<li>to specify the <code>ezdm</code> model object matching the
-aggregated data of the task</li>
-<li>specify a model formula predicting which parameters you assume to
-vary as a function of the difficulty level</li>
-<li>estimate the model using the <code>bmm</code> function and interpret
-the results with respect to the experimental effects on the model
-parameters</li>
+<li>preprare the data to include a <code>response</code> numeric
+response variable coding blue as <code>0</code> and red as
+<code>1</code></li>
+<li>specify the <code>ddm</code> model object, with the <code>rt</code>
+in seconds and the newly coded <code>response</code> variable as the
+required variables</li>
+<li>specify the <code>bmmformula</code> with assuming different
+<code>drift</code> dependent on the target (i.e. are there more red or
+blue dots) and think about which other parameters could reasonably vary
+by the experimental conditions (e.g. the difficulty of the task)</li>
+<li>estimate the model using the <code>bmm</code> function by passing
+the <code>ddm</code> model object and the <code>bmmformula</code>. Check
+if the model starts sampling then load the saved results file:
+<code></code> (Model estimation for the full <code>ddm</code> can run
+for quite some time)</li>
+<li>interpret the results of the saved model object with respect to the
+experimental effects on the model parameters</li>
 </ol>
 
 
