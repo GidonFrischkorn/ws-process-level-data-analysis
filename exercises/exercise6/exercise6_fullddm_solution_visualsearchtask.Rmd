@@ -51,11 +51,12 @@ ddm_model <- ddm(rt = "rt", response = "resp_num", version = "four_par")
 
 ### 3) specify the `bmmformula` with 
 
-Now, we can consider which parameters are affected by the experimental manipulations. Here we assume different `drift` and `ndt` dependent on the the type of cue (positive/negative/neutral). Apart from that I only include fixed and random intercepts for the boundary and relative starting point.
+Now, we can consider which parameters are affected by the experimental manipulations. Here we assume different `drift` and `ndt` dependent on the the type of cue (positive/negative/neutral) and a `drift` based on the correct response. Apart from that I only include fixed and random intercepts for the boundary and relative starting point.
 
 ```{r specify bmmformula}
 ddm_formula <- bmf(
-  drift ~ 0 + condition + (0 + condition || participant),
+  ddm_formula <- bmf(
+  drift ~ 0 + correct:condition + (0 + correct:condition || participant),
   bound ~ 1 + (1 || participant),
   ndt ~ 0 + condition + (0 + condition || participant),
   zr ~ 1 + (1 || participant)
@@ -93,14 +94,28 @@ Then, we can test some hypothesis:
 
 ```{r ddm_hypothesis}
 ddm_hypothesis <- c(
-  drift_neg_neu = "drift_conditionnegative - drift_conditionneutral = 0",
-  drift_neu_pos = "drift_conditionneutral - drift_conditionpositive = 0",
-  drift_neg_pos = "drift_conditionnegative - drift_conditionpositive = 0",
+  # Drift rates: comparing arrow down vs arrow up within each condition
+  drift_neg = "drift_correctarrowdown:conditionnegative = -drift_correctarrowup:conditionnegative",
+  drift_neu = "drift_correctarrowdown:conditionneutral = -drift_correctarrowup:conditionneutral",
+  drift_pos = "drift_correctarrowdown:conditionpositive = -drift_correctarrowup:conditionpositive",
+  
+  # Starting point / bias
   bias = "zr_Intercept = 0",
-  ndt_neg_neu   = "ndt_conditionnegative - ndt_conditionneutral = 0",
-  ndt_neu_pos   = "ndt_conditionneutral - ndt_conditionpositive = 0",
-  ndt_neg_pos   = "ndt_conditionnegative - ndt_conditionpositive = 0",
+  
+  # Non-decision time comparisons
+  ndt_neg_neu = "ndt_conditionnegative = ndt_conditionneutral",
+  ndt_neu_pos = "ndt_conditionneutral = ndt_conditionpositive"
 )
+
+
+ddm_hypothesis_results <- brms::hypothesis(
+  ddm_fit,
+  ddm_hypothesis
+)
+
+plot(ddm_hypothesis_results)
+ddm_hypothesis_results
+1/abs(ddm_hypothesis_results$hypothesis$Evid.Ratio)
 
 ddm_hypothesis_results <- brms::hypothesis(
   ddm_fit,
