@@ -14,7 +14,7 @@ Your task is to load one of the data sets we prepared for this exercise, either 
 
 The Visual Search data set contains data for 33 participants that completed the Visual Search task. In this task, participants were presented a color cue, a positive (the target color), a negative (the non target color) or neutral (not part of the visual search display). Participants had to look for a "C" that either looked upwards or downwards and report it´s direction with the arrow key. 
 
-In this exercise, we implement the four parameter `ddm` and test if participants were biased in responding with one of the two response options (i.e. blue or red). For this we have to specify a `ddm` with the actual responses - that is blue or red - as the response boundaries. Thus, we will recode the `correct_response` variable into a numeric `response` variable, and then estimate the `drift` separately for the target containing more blue or red dots.
+In this exercise, we implement the four parameter `ddm` and test if participants were biased in responding with one of the two response options (i.e. up or down). For this we have to specify a `ddm` with the actual responses - that is up or down - as the response boundaries. We will estimate the `drift` separately for the correct boundry. The correct variable is part of this dataset.  
 
 ## Solution
 
@@ -78,7 +78,7 @@ ddm_fit <- bmm(
   iter = 2000,
   sample_prior = TRUE,
   backend = "cmdstanr",
-  file = here("models","ddm_colortask_exc6")
+  file = here("models","ddm_visualsearch_exc6")
 )
 ```
 
