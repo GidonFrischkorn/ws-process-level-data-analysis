@@ -1,0 +1,113 @@
+---
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Exercise 6: Full Diffusion Decision Model
+
+In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the full Diffusion Decision Model. 
+
+Your task is to load one of the data sets we prepared for this exercise, either `exercise5_VisualSearch.txt` or `exc5_ColorJudgement.txt`.
+
+The Visual Search data set contains data for 33 participants that completed the Visual Search task. In this task, participants were presented a color cue, a positive (the target color), a negative (the non target color) or neutral (not part of the visual search display). Participants had to look for a "C" that either looked upwards or downwards and report it´s direction with the arrow key. 
+
+In this exercise, we implement the four parameter `ddm` and test if participants were biased in responding with one of the two response options (i.e. blue or red). For this we have to specify a `ddm` with the actual responses - that is blue or red - as the response boundaries. Thus, we will recode the `correct_response` variable into a numeric `response` variable, and then estimate the `drift` separately for the target containing more blue or red dots.
+
+## Solution
+
+```{r setup, message=FALSE}
+# Load required packages
+library(bmm)
+library(tidyverse)
+library(here)
+```
+
+### 1) prepare the data
+
+First, we need to prepare the data so that we can analyze our data with the `ddm` using the `bmm` function. For this we need to include a numeric  `response` variable coding arrowup as `0` and arrowdown as `1`. Convert the reaction times to seconds,
+
+```{r aggregate data}
+ddm_data <- read.table(here("data","excercise5_visualsearchtask.txt"),
+                        header = T, sep = ",")
+
+ddm_data$rt <- ddm_data$RT/1000
+ddm_data$resp_num <- ifelse(ddm_data$response == "arrowdown",1,0)
+ddm_data$condition <- factor(ddm_data$condition, 
+                             levels = c("negative", "neutral", "positive"))
+
+```
+
+### 2) Specify the `ddm` model object 
+
+Next, we need to specify the model object to link which data columns are used to identify the `ddm` using the `rt` in seconds and the newly coded `response` variable as the required variables
+
+```{r specify bmmodel}
+ddm_model <- ddm(rt = "rt", response = "resp_num", version = "four_par")
+```
+
+
+### 3) specify the `bmmformula` with 
+
+Now, we can consider which parameters are affected by the experimental manipulations. Here we assume different `drift` and `ndt` dependent on the the type of cue (positive/negative/neutral). Apart from that I only include fixed and random intercepts for the boundary and relative starting point.
+
+```{r specify bmmformula}
+ddm_formula <- bmf(
+  drift ~ 0 + condition + (0 + condition || participant),
+  bound ~ 1 + (1 || participant),
+  ndt ~ 0 + condition + (0 + condition || participant),
+  zr ~ 1 + (1 || participant)
+)
+
+default_prior(ddm_formula, data = ddm_data, model = ddm_model)
+```
+
+### 4) estimate the model 
+
+Finally, we use the `bmm` function to fit the full DDM by passing the `ddm` model object and the `bmmformula`. Again, I saved the model results to save time. The `ddm` can take quite some time for parameter estimation. For this data it took about an hour on my machine. 
+
+```{r Estimate ezdm, echo=TRUE, message=FALSE, warning=FALSE}
+ddm_fit <- bmm(
+  formula = ddm_formula,
+  data = ddm_data,
+  model = ddm_model,
+  cores = 4,
+  iter = 2000,
+  sample_prior = TRUE,
+  backend = "cmdstanr",
+  file = here("models","ddm_colortask_exc6")
+)
+```
+
+### 5) Evalutate results 
+ 
+First, we can have a look at the summary of the fitted `ddm` model object.
+
+```{r print summary}
+summary(ddm_fit)
+```
+
+Then, we can test some hypothesis:
+
+```{r ddm_hypothesis}
+ddm_hypothesis <- c(
+  drift_neg_neu = "drift_conditionnegative - drift_conditionneutral = 0",
+  drift_neu_pos = "drift_conditionneutral - drift_conditionpositive = 0",
+  drift_neg_pos = "drift_conditionnegative - drift_conditionpositive = 0",
+  bias = "zr_Intercept = 0",
+  ndt_neg_neu   = "ndt_conditionnegative - ndt_conditionneutral = 0",
+  ndt_neu_pos   = "ndt_conditionneutral - ndt_conditionpositive = 0",
+  ndt_neg_pos   = "ndt_conditionnegative - ndt_conditionpositive = 0",
+)
+
+ddm_hypothesis_results <- brms::hypothesis(
+  ddm_fit,
+  ddm_hypothesis
+)
+
+plot(ddm_hypothesis_results)
+ddm_hypothesis_results
+1/abs(ddm_hypothesis_results$hypothesis$Evid.Ratio)
+```
