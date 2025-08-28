@@ -11,7 +11,7 @@ output:
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the ez-Diffusion Model. This implementation allows for a fast parameter estimation while still providing acceptable recovery of three parameters of interest:
 
 1. drift rate = the rate of evidence accumulation
-2. boundary seperation = the seperation of decision thresholds
+2. boundary separation = the seperation of decision thresholds
 3. non-decision time = the time for non-decisional processes.
 
 Your task is to load one of the data sets we prepared for this exercise, either `exercise5_VisualSearch.txt` or `exc5_ColorJudgement.txt`.

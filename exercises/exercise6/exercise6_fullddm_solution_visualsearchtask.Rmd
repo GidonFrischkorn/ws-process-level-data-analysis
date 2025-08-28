@@ -30,8 +30,8 @@ library(here)
 First, we need to prepare the data so that we can analyze our data with the `ddm` using the `bmm` function. For this we need to include a numeric  `response` variable coding arrowup as `0` and arrowdown as `1`. Convert the reaction times to seconds,
 
 ```{r aggregate data}
-ddm_data <- read.table(here("data","excercise5_visualsearchtask.txt"),
-                        header = T, sep = ",")
+ddm_data <- read.table(here("data","exercise5_visualsearchtask.txt"),
+                        header = T)
 
 ddm_data$rt <- ddm_data$RT/1000
 ddm_data$resp_num <- ifelse(ddm_data$response == "arrowdown",1,0)
@@ -55,7 +55,6 @@ Now, we can consider which parameters are affected by the experimental manipulat
 
 ```{r specify bmmformula}
 ddm_formula <- bmf(
-  ddm_formula <- bmf(
   drift ~ 0 + correct:condition + (0 + correct:condition || participant),
   bound ~ 1 + (1 || participant),
   ndt ~ 0 + condition + (0 + condition || participant),
@@ -76,6 +75,7 @@ ddm_fit <- bmm(
   model = ddm_model,
   cores = 4,
   iter = 2000,
+  refresh = 0,
   sample_prior = TRUE,
   backend = "cmdstanr",
   file = here("models","ddm_visualsearch_exc6")
