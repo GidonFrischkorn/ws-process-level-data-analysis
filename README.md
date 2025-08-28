@@ -14,6 +14,8 @@ The `models` folder contains saved results files from the models estimated durin
 
 The `data` folder contains the data set we will use for the exercises. Please note that these data sets are shared only for the exercises and are not to be distributed further.
 
+The `references` folder contains PDF files of articles that provide an accessible introduction to most models and also include more detailed background information.
+
 ## Required software
 
 Please ensure that you have a current version of R (> 4.0.0) and RStudio installed on your machine. You can find instrcuction on dowloading these here:
