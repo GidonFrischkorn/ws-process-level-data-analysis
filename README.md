@@ -10,7 +10,7 @@ The `slides` folder contains PDF slides for the different input sessions of the 
 
 The `exercises` folder contains scripts and Markdown files that provide solutions to the exercises we will work on throughout the workshop. These files will be updated during the workshop to reflect changes and solutions we discussed during the workshop.
 
-The `results` folder contains saved results files from the models estimated during the workshop. Should you run into difficulties with one of the exercises and not be able to esimate one of the models we are working on during the workshop, you can load these results files to still evaluate results and see how to interpret them.
+The `models` folder contains saved results files from the models estimated during the workshop. Should you run into difficulties with one of the exercises and not be able to esimate one of the models we are working on during the workshop, you can load these results files to still evaluate results and see how to interpret them.
 
 The `data` folder contains the data set we will use for the exercises. Please note that these data sets are shared only for the exercises and are not to be distributed further.
 
