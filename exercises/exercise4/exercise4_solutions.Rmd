@@ -2,8 +2,8 @@
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -134,7 +134,7 @@ m3_fit_custom <- bmm(
   data = sim_data_customM3,
   cores = 4,
   refresh = 0,
-  file = here("models","parRec_m3_exc5")
+  file = here("models","parRec_m3_exc4")
 )
 
 # print summary
