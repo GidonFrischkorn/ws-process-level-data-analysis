@@ -44,7 +44,7 @@ library(bayestestR)
 
 ### 1. Prepare data
 
-First, we need to aggregate the data so that we can analyze our data with the `ezdm` using the `bmm` function. For this, we need to calcualte the mean reaction time, the variance of the reaction time, the number of correct responses, and the number of trials in each cell of the experimental design.
+First, we need to aggregate the data so that we can analyze our data with the `ezdm` using the `bmm` function. For this, we need to calcualte the mean reaction time, the variance of the reaction time, the number of correct responses, and the number of trials in each of the four cells of the experimental design: easy - blue correct, easy - red correct, difficult - blue correct, and difficult - red correct.
 
 ```{r aggregate data}
 ezdm_data <- read.table(here("data","exercise5_visual_search_task.txt"),
