@@ -373,13 +373,13 @@ library(here)</code></pre>
 <h3>1) Load the <strong>aggregated data</strong> of experiment 2 of
 Williams et al. (2022).</h3>
 <p>This data set (filename:
-<code>exercise2_Williams2022_exp2_aggregated.txt</code>) contains
-aggregated performance indices from a Change Detection Task with Set
-Size 8 and a between subject manipulation <code>isAdaptive</code>. The
-manipulation entailed a prompt pushing participants to respond equally
-often with <code>same</code> and <code>different</code> to achieve a
-less biased response pattern.</p>
-<pre class="r"><code>data_Williams2022_agg &lt;- read.table(here(&quot;data&quot;,&quot;exercise2_Williams2022_exp2_aggregated.txt&quot;))
+<code>exercise2_data_exp2_aggregated.txt</code>) contains aggregated
+performance indices from a Change Detection Task with Set Size 8 and a
+between subject manipulation <code>isAdaptive</code>. The manipulation
+entailed a prompt pushing participants to respond equally often with
+<code>same</code> and <code>different</code> to achieve a less biased
+response pattern.</p>
+<pre class="r"><code>data_Williams2022_agg &lt;- read.table(here(&quot;data&quot;,&quot;exercise2_data_exp2_aggregated.txt&quot;))
 head(data_Williams2022_agg)</code></pre>
 <pre><code>##                id isAdaptive prop_correct        K    dprime       crit
 ## 1 0rjs8zk3f8a1c51         no    0.6666667 2.666667 0.9707840 0.49096234
@@ -560,10 +560,11 @@ hypothesis(fit_dprime,
 <div id="load-the-non-aggregated-data-of-experiment-2-of-williams-et-al.-2022." class="section level3">
 <h3>1) Load the <strong>non-aggregated data</strong> of experiment 2 of
 Williams et al. (2022).</h3>
-<p>This data (filename: <code>exercise2_Williams2022_exp2.txt</code>)
-contains more detailed data on the number of hits and false alarms for
-trials with targets and foils as test stimuli.</p>
-<pre class="r"><code>data_Williams2022 &lt;- read.table(here(&quot;data&quot;,&quot;exercise2_Williams2022_exp2.txt&quot;))
+<p>This data (filename: <code>exercise2_data_exp2.txt</code>) contains
+more detailed data on the number of hits and false alarms
+(<code>sum_sayold</code>) for trials with targets and foils
+(<code>was_same_trial</code>) as test stimuli.</p>
+<pre class="r"><code>data_Williams2022 &lt;- read.table(here(&quot;data&quot;,&quot;exercise2_data_exp2.txt&quot;))
 head(data_Williams2022)</code></pre>
 <pre><code>##                id isAdaptive was_same_trial sum_saysame sum_correct n_trials
 ## 1 0rjs8zk3f8a1c51         no              0          37         188      225

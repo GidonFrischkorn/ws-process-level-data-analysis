@@ -2,8 +2,8 @@
 title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
 author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 # Exercise 2: Hierarchical Models & Signal Detection Theory
@@ -12,7 +12,7 @@ output:
 
 1.  Load the **aggregated data** of experiment 2 of Williams et al. (2022)
 
-This data set (filename: `exercise2_Williams2022_exp2_aggregated.txt`) contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
+This data set (filename: `exercise2_data_exp2_aggregated.txt`) contains aggregated performance indices from a Change Detection Task with Set Size 8 and a between subject manipulation `isAdaptive`. The manipulation entailed a prompt pushing participants to respond equally often with `same` and `different` to achieve a less biased response pattern.
 
 2.  Fit Bayesian GLMs with either proportion correct, Cowan's K or dprime as the dependent variable.
 
@@ -26,7 +26,7 @@ The `hypothesis` function allows to specify to-be-tested hypotheses for any GLM 
 
 1. Load the **non-aggregated data** of experiment 2 of Williams et al. (2022)
 
-This data (filename: `exercise2_Williams2022_exp2.txt`) contains more detailed data on the number of hits and false alarms (`sum_sayold`) for trials with targets and foils (`was_same_trial`) as test stimuli.
+This data (filename: `exercise2_data_exp2.txt`) contains more detailed data on the number of hits and false alarms (`sum_sayold`) for trials with targets and foils (`was_same_trial`) as test stimuli.
 
 2.  Specify the non-linear formula to fit an SDT model with this data.
 
