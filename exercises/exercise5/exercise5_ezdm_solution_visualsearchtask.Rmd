@@ -1,9 +1,12 @@
-
-
 ---
-title: "Exercise 5: EZ-Diffusion Model"
-output: html_document
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  html_document: default
+  pdf_document: default
 ---
+
+# Solutions: Exercise 5 - EZ-Diffusion Model (Visual Search Task)
 
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the ez-Diffusion Model. This implementation allows for a fast parameter estimation while still providing acceptable recovery of three parameters of interest:
 
@@ -69,9 +72,9 @@ Now, we can consider which parameters are affected by the experimental manipulat
 
 ```{r specify bmmformula}
 ezdm_formula <- bmf(
-  drift ~ 1 + condition + (1 + condition | participant),
-  bound ~  1 + (1 | participant),
-  ndt ~  1 + condition + (1 + condition | participant)
+  drift ~ 0 + condition + (0 + condition | participant),
+  bound ~   1 + ( 1 | participant),
+  ndt ~  0 + condition + (0 + condition | participant)
 )
 ```
 
@@ -85,7 +88,9 @@ ezdm_fit <- bmm(
   data = ezdm_data_agg,
   model = ezdm_model,
   cores = 4,
-  sample_prior = TRUE
+  sample_prior = TRUE,
+  refresh = 0,
+  file = here("models","ezdm_visualsearch_exc5")
 )
 ```
 
@@ -96,10 +101,10 @@ summary(ezdm_fit)
 
 ```{r}
 ezdm_hypothesis <- c(
-  driftFX1 = "drift_condition1 = 0",
-  driftFX2 = "drift_condition2 = 0",
-  ndtFX1 = "ndt_condition1 = 0",
-  ndtFX2 = "ndt_condition2 = 0"
+  driftFX1 = "drift_conditionnegative = drift_conditionneutral",
+  driftFX2 = "drift_conditionpositive = drift_conditionneutral",
+  ndtFX1 = "ndt_conditionnegative = ndt_conditionneutral",
+  ndtFX2 = "ndt_conditionpositive = ndt_conditionneutral"
 )
 
 ezdm_hypothesis_results <- brms::hypothesis(

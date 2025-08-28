@@ -6,12 +6,12 @@ output:
   pdf_document: default
 ---
 
-# Solutions: Exercise 5 - EZ-Diffusion Model
+# Solutions: Exercise 5 - EZ-Diffusion Model (Color Judgement taks)
 
 In this exercise, we will have a look at estimating the parameters from the diffusion decision model using the hierarchical Bayesian implementation of the ez-Diffusion Model. This implementation allows for a fast parameter estimation while still providing acceptable recovery of three parameters of interest:
 
 1. drift rate = the rate of evidence accumulation
-2. boundary separation = the seperation of decision thresholds
+2. boundary separation = the separation of decision thresholds
 3. non-decision time = the time for non-decisional processes.
 
 Your task is to load one of the data sets we prepared for this exercise, either `exc4_VisualSearch.txt` or `exc5_ColorJudgement.txt`.
@@ -31,7 +31,7 @@ library(here)
 
 ### 1) aggregate the data, so that we can estimate the `ezdm` 
 
-First, we need to aggregate the data so that we can analyze our data with the `ezdm` using the `bmm` function. For this, we need to calcualte the mean reaction time, the varianve of the reaction time, the number of correct responses, and the number of trials in each cell of the experimental design.
+First, we need to aggregate the data so that we can analyze our data with the `ezdm` using the `bmm` function. For this, we need to calcualte the mean reaction time, the variance of the reaction time, the number of correct responses, and the number of trials in each cell of the experimental design.
 
 ```{r aggregate data}
 ezdm_data <- read.table(here("data","exc5_ColorJudgementTask.txt"),
