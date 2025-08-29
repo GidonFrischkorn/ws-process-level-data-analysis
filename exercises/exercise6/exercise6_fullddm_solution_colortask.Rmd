@@ -30,7 +30,7 @@ library(here)
 First, we need to prepare the data so that we can analyze our data with the `ddm` using the `bmm` function. For this we need to include a numeric  `response` variable coding blue as `0` and red as `1`. Additionally, we need to ensure that our `rt` is stored in seconds. 
 
 ```{r aggregate data}
-ddm_data <- read.table(here("data","exc5_ColorJudgementTask.txt"),
+ddm_data <- read.table(here("data","exercise5_color_judgement_task.txt"),
                         header = T, sep = ",")
 
 ddm_data$rt <- ddm_data$rt/1000
