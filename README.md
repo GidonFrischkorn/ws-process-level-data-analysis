@@ -33,7 +33,8 @@ In addition to R and RStudio, you should also install either `rstan` or `cmdstan
 Finally, you need to install the `bmm` R package. As we will use very recent and some features still in development, please install the develeoper version:
 
 ```
-devtools::install_github("GidonFrischkorn/bmm")
+remotes::install_github("GidonFrischkorn/bmm")
 ```
 
+The R script `Install_Packages.R` includes code that should install all relevant packages. Please do check the requirements for a C compiler in on the STAN webpage, if there are issues installing the packages.
 
