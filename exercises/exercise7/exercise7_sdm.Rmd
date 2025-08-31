@@ -1,0 +1,23 @@
+---
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Exercise 7: Signal Discrimination Model
+
+In this exercise, we will have a look at fitting the Signal Discrimation model to a continous reproduction task varying the set size of to be remembered color patches. 
+
+The data is part of the `bmm` package and can be loaded as `oberauer_lin_2017`.
+
+Your task is:
+
+1. to specify the `sdm` model object 
+2. estimate an `sdm` model evaluating if the parameter `c` or `kappa` changes over set size. Consider entering set size as a numeric variable assuming a linear set size effect
+3. fit the `sdm` to the data
+4. plot the predicted effects on `c` and `kappa` using the `conditional_effects` function 
+5. use the `hypothesis` function to test for effects of set size on `c` and `kappa`
+
+If you want compare your results to fitting a two-parameter mixture model on the data. Again, see how the proportion of responses from memory and kappa is affected by the set size variable.

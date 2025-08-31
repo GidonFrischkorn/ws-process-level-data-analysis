@@ -1,0 +1,147 @@
+---
+title: "Analyzing data on the level of cognitive processes - ESCoP 2025"
+author: "Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r chunk_setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Exercise 7: Signal Discrimination Model
+
+In this exercise, we will have a look at fitting the Signal Discrimation model to a continous reproduction task varying the set size of to be remembered color patches. 
+
+```{r load_packages, message=F}
+# empty environment
+rm(list = ls())
+
+# load libraries
+library("here")
+library("tidyverse")
+library("brms")
+library("bmm")
+```
+
+The data is part of the `bmm` package and can be loaded as `oberauer_lin_2017`.
+
+```{r load_data}
+sdm_data <- oberauer_lin_2017
+head(sdm_data)
+```
+
+
+Your task is:
+
+1. specify the `sdm` model object using the response error `dev_rad`.
+
+```{r setup_model}
+sdm_model <- sdm(resp_error = "dev_rad")
+```
+
+
+2. estimate an `sdm` model evaluating if the parameter `c` or `kappa` changes over set size. Consider entering set size as a numeric variable assuming a linear set size effect
+
+```{r specify_formula}
+sdm_data$ss_num <- as.numeric(sdm_data$set_size)
+
+# center on set size 1
+sdm_data$ss_num <- sdm_data$ss_num - min(sdm_data$ss_num)
+
+# sort data by predictor for faster fitting
+sdm_data_sorted <- sdm_data %>% arrange(ss_num, ID)
+
+sdm_formula <- bmf(
+  c ~ 1 + ss_num + (1 + ss_num | ID),
+  kappa ~ 1 + ss_num + (1 + ss_num | ID)
+)
+
+default_prior(sdm_formula, data = sdm_data, model = sdm_model)
+```
+
+3. fit the `sdm` to the data
+
+```{r fit_sdm}
+sdm_fit <- bmm(
+  formula = sdm_formula,
+  data = sdm_data_sorted,
+  model = sdm_model,
+  # sampler settings
+  cores = 4,
+  init = 0.5,
+  iter = 2000,
+  refresh = 100,
+  sample_prior = TRUE,
+  backend = "cmdstanr",
+  file = here("models","exc7_sdm_setsize")
+)
+
+brms::pp_check(sdm_fit)
+```
+
+4. plot the predicted effects on `c` and `kappa` using the `conditional_effects` function
+
+```{r plot_effects}
+conditional_effects(sdm_fit, dpar = "c", effects = "ss_num")
+conditional_effects(sdm_fit, dpar = "kappa", effects = "ss_num")
+```
+
+
+5. use the `hypothesis` function to test for effects of set size on `c` and `kappa`
+
+```{r test_hypothesis}
+ss_effects <- hypothesis(
+  sdm_fit,
+  c("c_setsize" = "c_ss_num = 0",
+    "kappa_setsize" = "kappa_ss_num = 0")
+)
+ss_effects
+plot(ss_effects)
+```
+
+If you want compare your results to fitting a two-parameter mixture model on the data. Again, see how the proportion of responses from memory and kappa is affected by the set size variable.
+
+```{r fit_mixture}
+mixture_model <- mixture2p(resp_error = "dev_rad")
+
+mixture_formula <- bmf(
+  thetat ~ 1 + ss_num + (1 + ss_num | ID),
+  kappa ~ 1 + ss_num + (1 + ss_num | ID)
+)
+
+mixture_fit <- bmm(
+  formula = mixture_formula,
+  data = sdm_data,
+  model = mixture_model,
+   # sampler settings
+  cores = 4,
+  init = 0.5,
+  iter = 2000,
+  refresh = 100,
+  sample_prior = TRUE,
+  backend = "cmdstanr",
+  file = here("models","exc7_mixture2p_setsize")
+)
+
+pp_check(mixture_fit)
+
+summary(mixture_fit)
+```
+
+```{r effects_mixture}
+conditional_effects(mixture_fit, dpar = "theta1", effect = "ss_num")
+conditional_effects(mixture_fit, dpar = "kappa1", effect = "ss_num")
+```
+
+```{r hypothesis_mixture}
+hypothesis(
+  mixture_fit,
+  c("pMem_ss" = "thetat_ss_num = 0",
+    "kappa_ss" = "kappa_ss_num = 0")
+)
+
+```
+
+
