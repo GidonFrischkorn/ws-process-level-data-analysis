@@ -358,21 +358,21 @@ Courage</h4>
 
 
 <div id="exercise-4---custom-m3-models-parameter-recovery-simulations" class="section level1">
-<h1>Exercise 4 - Custom <code>m3</code> models &amp; Parameter Recovery
+<h1>Exercise 4 - Custom <code>m3</code> models &amp; parameter recovery
 simulations</h1>
 <p>In this exercise we simulated data from a custom M3 model to then fit
 the same custom M3 model and evaluate parameter recovery. The idea
 behind parameter recovery is to evaluate how well parameters that
 generated data can be recovered by a model fitting routine given a
 certain amount of data for each subject.</p>
-<div id="specify-custom-m3-to-simulate-data-frome" class="section level2">
-<h2>Specify custom M3 to simulate data frome</h2>
+<div id="specify-custom-m3-to-simulate-data-from" class="section level2">
+<h2>Specify custom M3 to simulate data from</h2>
 <p>First, you need to specify the custom M3 model to simulate data from.
-For this, you need to a) specfiy the activation functions for the
+For this, you need to a) specify the activation functions for the
 different response categories of your custom M3, and b) you need to set
 up the M3 model object that includes additional information, such as the
-number of response candiates in each response category, the choice rule,
-and the version.</p>
+number of response candidates in each response category, the choice
+rule, and the version.</p>
 <p>We want to simulate a custom <code>m3</code> for a complex span task
 assuming that there is a different degree to which
 <code>item memory</code> and <code>binding memory</code> can be
@@ -390,12 +390,12 @@ categories:</p>
 <p>For the number of candidates in each response category, let’s assume
 we conducted a task with set size five. That is there is one
 <code>correct</code> candidate and one <code>distIP</code> candidate,
-there are four <code>other</code> and <code>distOP</code> candidates,
-and then we present addition five <code>npl</code> options. In a real
-experiment this would result in participants selecting their response
-out of 15 retrieval candidates.</p>
+there are four <code>other</code> and four <code>distOP</code>
+candidates, and then we present additionally five <code>npl</code>
+options. In a real experiment this would result in participants
+selecting their response out of 15 retrieval candidates.</p>
 <p>As the <code>choice_rule</code> we will use the <code>softmax</code>
-as it is more stable in parmaeter estimation.</p>
+as it is more stable in parameter estimation.</p>
 </div>
 <div id="simulate-data-from-the-custom-m3" class="section level2">
 <h2>Simulate data from the custom M3</h2>
@@ -415,7 +415,7 @@ trial.</li>
 </div>
 <div id="fit-the-custom-m3-to-the-simulated-data" class="section level2">
 <h2>Fit the custom M3 to the simulated data</h2>
-<p>Once you have simulated data for each of the 30 subjects, we can use
+<p>Once you have simulated data for each of the 50 subjects, we can use
 the simulated data and fit the same custom M3 to the simulated data. For
 this, we use the same activation functions, but need to add the linear
 models for each of the model parameters. Here, we have no experimental
@@ -426,10 +426,10 @@ extract the fixed and random effects from the fitted model object. For
 this, you can use the <code>brms</code> functions <code>fixef</code> and
 <code>ranef</code>. Please note, that the random effects are deviations
 from the fixed intercept, so you need to add the fixed intercept to the
-random effects to obtain the actual subject level parameter</p>
+random effects to obtain the actual subject level parameter.</p>
 </div>
 <div id="quantify-and-plot-parameter-recovery" class="section level2">
-<h2>Quantify and Plot Parameter Recovery</h2>
+<h2>Quantify and plot parameter recovery</h2>
 <p>Finally, we can quantify the parameter recovery with several indices.
 For example:</p>
 <ol style="list-style-type: decimal">
