@@ -72,15 +72,15 @@ m3_model_custom <- m3(resp_cats = c("correct","other","distIP", "distOP", "npl")
 
 Using the activation functions you specified and the `m3` model object you generated you can simulate data for 50 subjects. For this you have to:
 
-1. generate subject parameters for each of the model parameters, typical parameter means are: c = 3, a = 1.5, rc = 0.3, ra = 0.8, all with an sd = 0.5
-2. pre-allocate a data frame to save the simulated data in
-3. loop over each subject and use the `rm3` function to generate data - let's start with 100 retrievals for each subject, that would mean 25 trials with testing all 5 positions in a single trial.
+1. Generate subject parameters for each of the model parameters, typical parameter means are: c = 3, a = 1.5, rc = 0.3, ra = 0.8, all with an sd = 0.5
+2. Pre-allocate a data frame to save the simulated data in
+3. Loop over each subject and use the `rm3` function to generate data - let's start with 100 retrievals for each subject, that would mean 25 trials with testing all 5 positions in a single trial. Keep in mind that activation parameters should be positive values.
 
 ```{r gen_pars}
 n_sub <- 50
 
-# draw subject parameters: for the simple choice rule, i used a log link function
-# to ensure that activation parameters are positive
+# draw subject parameters: for the simple choice rule
+# log link function to ensure that activation parameters are positive
 sim_parms_custom <- data.frame(
   ID = 1:n_sub,
   c = rnorm(n_sub, mean = 3, sd = 0.5),
@@ -90,7 +90,6 @@ sim_parms_custom <- data.frame(
   b = 0
 )
 
-# pre-allocate the data frame for simulated data
 # pre-allocate the data frame for simulated data
 sim_data_customM3 <- data.frame(
   ID = 1:n_sub,
@@ -164,9 +163,9 @@ df_recPars_custom <- data.frame(
 
 Finally, we can quantify the parameter recovery with several indices. For example:
 
-1. calculate the correlation between the generating and recovered parameters
-2. quantify the bias in parameter estimation by calculating the mean difference between generating and recovered parameters
-3. quantify the error of approximation by calculating the Root-Mean Square Error (RMSE) -> make a quick Google search to see if you can find the formula for this.
+1. Calculate the correlation between the generating and recovered parameters
+2. Quantify the bias in parameter estimation by calculating the mean difference between generating and recovered parameters
+3. Quantify the error of approximation by calculating the Root-Mean Square Error (RMSE) -> make a quick Google search to see if you can find the formula for this.
 
 ```{r}
 cor(df_recPars_custom$c, sim_parms_custom$c)

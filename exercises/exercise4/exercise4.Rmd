@@ -34,9 +34,9 @@ As the `choice_rule` we will use the `softmax` as it is more stable in parameter
 
 Using the activation functions you specified and the `m3` model object you generated you can simulate data for 50 subjects. For this you have to:
 
-1. generate subject parameters for each of the model parameters, typical parameter means are: c = 3, a = 1.5, rc = 0.3, ra = 0.8, all with an sd = 0.5
-2. pre-allocate a data frame to save the simulated data in
-3. loop over each subject and use the `rm3` function to generate data - let's start with 100 retrievals for each subject, that would mean 25 trials with testing all 5 positions in a single trial.
+1. Generate subject parameters for each of the model parameters, typical parameter means are: c = 3, a = 1.5, rc = 0.3, ra = 0.8, all with an sd = 0.5
+2. Pre-allocate a data frame to save the simulated data in
+3. Loop over each subject and use the `rm3` function to generate data - let's start with 100 retrievals for each subject, that would mean 25 trials with testing all 5 positions in a single trial. Keep in mind that activation parameters should be positive values.
 
 ## Fit the custom M3 to the simulated data
 

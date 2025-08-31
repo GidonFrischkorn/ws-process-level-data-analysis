@@ -403,14 +403,14 @@ as it is more stable in parameter estimation.</p>
 model object you generated you can simulate data for 50 subjects. For
 this you have to:</p>
 <ol style="list-style-type: decimal">
-<li>generate subject parameters for each of the model parameters,
+<li>Generate subject parameters for each of the model parameters,
 typical parameter means are: c = 3, a = 1.5, rc = 0.3, ra = 0.8, all
 with an sd = 0.5</li>
-<li>pre-allocate a data frame to save the simulated data in</li>
-<li>loop over each subject and use the <code>rm3</code> function to
+<li>Pre-allocate a data frame to save the simulated data in</li>
+<li>Loop over each subject and use the <code>rm3</code> function to
 generate data - let’s start with 100 retrievals for each subject, that
-would mean 25 trials with testing all 5 positions in a single
-trial.</li>
+would mean 25 trials with testing all 5 positions in a single trial.
+Keep in mind that activation parameters should be positive values.</li>
 </ol>
 </div>
 <div id="fit-the-custom-m3-to-the-simulated-data" class="section level2">
