@@ -155,7 +155,7 @@ summary(m3_fit_ss_exp1)
 
 # model fit
 plot(m3_fit_ss_exp1, ask = F)
-
+pp_check(m3_fit_ss_exp1)
 ```
 
 #### Plot model posteriors and model predicitions

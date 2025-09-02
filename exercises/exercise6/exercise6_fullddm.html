@@ -9,9 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Gidon T. Frischkorn, Ruhi Bhanap, and Isabel Courage" />
 
 
-<title>Exercise 6: Full Diffusion Decision Model</title>
+<title>Analyzing data on the level of cognitive processes - ESCoP 2025</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,18 +349,22 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Exercise 6: Full Diffusion Decision
-Model</h1>
+<h1 class="title toc-ignore">Analyzing data on the level of cognitive
+processes - ESCoP 2025</h1>
+<h4 class="author">Gidon T. Frischkorn, Ruhi Bhanap, and Isabel
+Courage</h4>
 
 </div>
 
 
+<div id="exercise-6-full-diffusion-decision-model" class="section level1">
+<h1>Exercise 6: Full Diffusion Decision Model</h1>
 <p>In this exercise, we will have a look at estimating the parameters
 from the diffusion decision model using the hierarchical Bayesian
 implementation of the full Diffusion Decision Model.</p>
 <p>Your task is to load one of the data sets we prepared for this
-exercise, either <code>exc4_VisualSearch.txt</code> or
-<code>exc5_ColorJudgement.txt</code>.</p>
+exercise, either <code>excercise5_visual_search_task.txt</code> or
+<code>excercise5_color_judgement_task.txt</code>.</p>
 <p>The <em>Color Judgement</em> data set contains data of 50
 participants that completed a Color Judgement task. In this task
 participants saw an array of blue and red dots and should decide if the
@@ -379,7 +384,7 @@ response options (i.e. blue or red). For this we have to specify a
 the response boundaries. Thus, we will recode the
 <code>correct_response</code> variable into a numeric
 <code>response</code> variable, and then estimate the <code>drift</code>
-separetly for the target containing more blue or red dots.</p>
+separately for the target containing more blue or red dots.</p>
 <p>Your task is:</p>
 <ol style="list-style-type: decimal">
 <li>preprare the data to include a <code>response</code> numeric
@@ -400,6 +405,7 @@ for quite some time)</li>
 <li>interpret the results of the saved model object with respect to the
 experimental effects on the model parameters</li>
 </ol>
+</div>
 
 
 

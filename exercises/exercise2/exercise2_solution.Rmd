@@ -40,15 +40,14 @@ Use the `brm` function to specify that the dependent variable should vary as a f
 ```{r GLM_propCorrect}
 
 # check default priors
-default_prior(prop_correct ~ isAdaptive, data = data_Williams2022_agg)
+default_prior(prop_correct ~ 1 + isAdaptive, data = data_Williams2022_agg)
 
 # change priors for parameters of class b
 my_priors_pc <- prior(normal(0,0.25), class = b)
 
 # specify the brmsformula
 pc_formula <- bf(
-  prop_correct ~ 1 + isAdaptive, 
-  sigma ~ 1 + isAdaptive
+  prop_correct ~ 1 + isAdaptive
 )
 
 # fit model
@@ -223,8 +222,10 @@ Hypotheses:
 ```{r}
 
 # test if manipulation had effects on SDT parameters
-hypothesis(fit_sdt,
+hyp <- hypothesis(fit_sdt,
            c("dprime_isAdaptiveyes = 0",
              "crit_isAdaptiveyes = 0"))
+hyp$hypothesis$Evid.Ratio
+
 ```
 

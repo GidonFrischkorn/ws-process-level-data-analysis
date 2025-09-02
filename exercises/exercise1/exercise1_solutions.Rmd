@@ -37,7 +37,7 @@ We first define the elements from which we sample (1 to 30). Then we create a ve
 
 sample_elements <- 1:5
 
-my_probs <- bmm::softmax(rnorm(length(sample_elements) - 1))
+my_probs <- bmm::softmax(runif(length(sample_elements) - 1))
 my_samples <- sample(sample_elements, size = 3, replace = T, prob = my_probs)
 
 ```
