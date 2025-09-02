@@ -20,7 +20,7 @@ In this exercise, we implement the four parameter `ddm` and test if participants
 
 Your task is:
 
-1. preprare the data to include a `response` numeric response variable coding blue as `0` and red as `1`
+1. prepare the data to include a `response` numeric response variable coding blue as `0` and red as `1`
 2. specify the `ddm` model object, with the `rt` in seconds and the newly coded `response` variable as the required variables
 3. specify the `bmmformula` with assuming different `drift` dependent on the target (i.e. are there more red or blue dots) and think about which other parameters could reasonably vary by the experimental conditions (e.g. the difficulty of the task)
 4. estimate the model using the `bmm` function by passing the `ddm` model object and the `bmmformula`. Check if the model starts sampling then load the saved results file: ` ` (Model estimation for the full `ddm` can run for quite some time) 
