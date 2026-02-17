@@ -104,7 +104,7 @@ sim_data_customM3 <- data.frame(
 sim_data_customM3 <- merge(sim_data_customM3, sim_parms_custom, by = "ID")
 
 # loop through all rows of the parameters that data should be simulated for
-n_trials <- 100
+n_trials <- 500
 for(i in 1:nrow(sim_data_customM3)) {
   
   sim_data_customM3[i,2:6] <- rm3(n = 1, size = n_trials,
@@ -134,9 +134,7 @@ m3_fit_custom <- bmm(
   model = m3_model_custom,
   data = sim_data_customM3,
   cores = 4,
-  refresh = 0,
-  file = here("models","parRec_m3_exc4")
-)
+  refresh = 0)
 
 # print summary
 summary(m3_fit_custom)

@@ -46,8 +46,8 @@ ezdm_data <- read.table(here("data","exercise5_color_judgement_task.txt"),
 ezdm_data_agg <- ezdm_data %>% 
   filter(rt > 150, rt < 5000) %>% 
   summarise(
-    mean_rt = mean(rt/1000),
-    var_rt = var(rt/1000),
+    mrt = mean(rt/1000),
+    vrt = var(rt/1000),
     n_correct = sum(correct),
     n_trials = n(),
     .by = c("participant_id", "condition", "correct_response")
@@ -62,10 +62,10 @@ contrasts(ezdm_data_agg$condition) <- contr.equalprior
 Next, we need to specify the model object to link which data columns are used to identify the `ezdm`.
 
 ```{r specify bmmodel}
-ezdm_model <- bmm::ezdm(mean_rt = "mean_rt", 
-                   var_rt = "var_rt", 
-                   n_correct = "n_correct",
-                   n_trials = "n_trials")
+ezdm_model <- bmm::ezdm(mean_rt = "mrt", 
+                        var_rt = "vrt", 
+                        n_correct = "n_correct",
+                        n_trials = "n_trials")
 ```
 
 ### 3. Specify the BMM formula
@@ -81,7 +81,7 @@ ezdm_formula <- bmf(
 ```
 
 ### 4. Estimate `ezdm` with the `bmm` function
- 
+
 Finally, we can estimate the model using our aggregated data, the `bmmodel` object we created and the `bmmformula` specifying how the model parameters should change over experimental condition.
 
 ```{r estimate ezdm}
@@ -90,9 +90,8 @@ ezdm_fit <- bmm(
   data = ezdm_data_agg,
   model = ezdm_model,
   cores = 4,
-  sample_prior = TRUE,
-  refresh = 0,
-  file = here("models","ezdm_colortask")
+  sample_prior = TRUE
+  #file = here("models","ezdm_colortask")
 )
 ```
 
