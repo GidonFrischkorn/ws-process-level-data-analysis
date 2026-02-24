@@ -31,13 +31,13 @@ library(tidyverse)
 
 ```
 
-We first define the elements from which we sample (1 to 5). Then we create a vector of probabilities that sums to one to determine the probability with which each element is sampled (here element 1 to 5). We generated random values from a normal distribution and used the softmax function that normalizes a vector of n values into a probability vector of n+1 values. Then we sample a given number of values from the population of 1:(n+1) integer values.
+We first define the elements from which we sample (1 to 5). Then we create a vector of probabilities that sums to one to determine the probability with which each element is sampled (here element 1 to 5). We generated random values from a uniform distribution and used the softmax function that normalizes a vector of n values into a probability vector of n values. Then we sample a given number of values from these elements.
 
 ```{r}
 
 sample_elements <- 1:5
 
-my_probs <- bmm::softmax(runif(length(sample_elements) - 1))
+my_probs <- bmm::softmax(runif(length(sample_elements)))
 my_samples <- sample(sample_elements, size = 3, replace = T, prob = my_probs)
 
 ```

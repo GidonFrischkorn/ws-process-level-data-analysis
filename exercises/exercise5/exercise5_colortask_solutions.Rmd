@@ -64,7 +64,7 @@ Next, we need to specify the model object to link which data columns are used to
 ```{r specify bmmodel}
 ezdm_model <- bmm::ezdm(mean_rt = "mrt", 
                         var_rt = "vrt", 
-                        n_correct = "n_correct",
+                        n_upper = "n_correct",
                         n_trials = "n_trials")
 ```
 
