@@ -84,8 +84,8 @@ brms::pp_check(sdm_fit)
 4. plot the predicted effects on `c` and `kappa` using the `conditional_effects` function
 
 ```{r plot_effects}
-conditional_effects(sdm_fit, dpar = "c", effects = "ss_num")
-conditional_effects(sdm_fit, dpar = "kappa", effects = "ss_num")
+conditional_effects(sdm_fit, par = "c", effects = "ss_num")
+conditional_effects(sdm_fit, par = "kappa", effects = "ss_num")
 ```
 
 
@@ -131,8 +131,8 @@ summary(mixture_fit)
 ```
 
 ```{r effects_mixture}
-conditional_effects(mixture_fit, dpar = "theta1", effect = "ss_num")
-conditional_effects(mixture_fit, dpar = "kappa1", effect = "ss_num")
+conditional_effects(mixture_fit, par = "thetat", effects = "ss_num")
+conditional_effects(mixture_fit, par = "kappa", effects = "ss_num")
 ```
 
 ```{r hypothesis_mixture}
